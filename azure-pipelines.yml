@@ -18,7 +18,7 @@ steps:
 # do this before all your .NET Core tasks
 - task: DotNetCoreInstaller@0
   inputs:
-    version: '3.0.100-preview6-012264'
+    version: 3.0.100-preview6-012264
 
 - task: NuGetToolInstaller@0
 
