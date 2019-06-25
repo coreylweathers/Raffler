@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29006.145
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "raffler", "raffler\raffler.csproj", "{E6F984E1-B57D-4545-90EE-45989E75CB7C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "api", "api\api.csproj", "{BF46DD68-0B2C-4F2D-90E6-D9D1660346BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E6F984E1-B57D-4545-90EE-45989E75CB7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6F984E1-B57D-4545-90EE-45989E75CB7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6F984E1-B57D-4545-90EE-45989E75CB7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6F984E1-B57D-4545-90EE-45989E75CB7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF46DD68-0B2C-4F2D-90E6-D9D1660346BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF46DD68-0B2C-4F2D-90E6-D9D1660346BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF46DD68-0B2C-4F2D-90E6-D9D1660346BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF46DD68-0B2C-4F2D-90E6-D9D1660346BD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5FBC8336-FC98-4328-89E7-387FB060119B}
+	EndGlobalSection
+EndGlobal
