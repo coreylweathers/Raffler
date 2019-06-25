@@ -15,10 +15,11 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-# do this before all your .NET Core tasks
-- task: DotNetCoreInstaller@0
+- task: UseDotNet@2
   inputs:
-    version: 3.0.100-preview5-011568
+    packageType: 'sdk'
+    version: '3.0.100-preview6-012264'
+    includePreviewVersions: true
 
 - task: NuGetToolInstaller@0
 
