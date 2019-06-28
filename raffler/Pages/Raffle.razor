@@ -1,8 +1,41 @@
 @page "/raffle"
 @inherits raffler.Components.RaffleComponent
 
-<h1>Text Hi to @RaffleNumber</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Text Hi to @RaffleNumber</h1>
+            <h1>Scan Here to Enter a Raffle</h1>
+            <img src="http://localhost:53059/api/images" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <h1>List of Entries</h1>
+            @if (EntryList == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var entry in EntryList)
+                    {
+                        <li>
+                            <p>Entry for @entry.MessageSid</p>
+                            <p>Entry at @entry.TimeStamp</p>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+        <div class="col-6">
+            <h1>Here is the next Event's prize</h1>
+            <img class="prize-img" src="https://s.yimg.com/aah/computergear/lego-women-of-nasa-building-kit-2.gif" />
+        </div>
+    </div>
+</div>
 <br />
-<h1>Scan Here to Enter a Raffle</h1>
-<img src="https://localhost:44379/api/images" />
+
 

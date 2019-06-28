@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
-using QRCoder;
+using shared.Models;
+using shared.Services;
+using System;
+using System.Threading.Tasks;
 
 namespace api.Controllers
 {
@@ -13,8 +11,14 @@ namespace api.Controllers
     [ApiController]
     public class BotController : ControllerBase
     {
+        private readonly IStorageService _storageService;
+
+        public BotController(IStorageService service)
+        {
+            _storageService = service;
+        }
         // POST
-        [HttpPost]
+        [HttpPost("")]
         public IActionResult Post([FromForm] string memory)
         {
             var redirectUri = "task://enter_raffle";
@@ -31,6 +35,35 @@ namespace api.Controllers
             var result = JObject.Parse(response);
 
             return new JsonResult(result);
+
+        }
+
+        [HttpPost("entry")]
+        public async Task<IActionResult> PostEntryAsync([FromForm] string memory)
+        {
+            var json = JObject.Parse(memory);
+            var fromNumber = json["twilio"]["sms"]["From"].ToString();
+
+            var entry = new RaffleEntry
+            {
+                Digits = fromNumber.Substring(fromNumber.Length - 7, 7),
+                MessageSid = json["twilio"]["sms"]["MessageSid"].ToString(),
+                EmailAddress = json["twilio"]["collected_data"]["ask_email_address"]["answers"]["email_address"]["answer"].ToString()
+            };
+
+            var sid = string.Empty;
+            try
+            {
+                sid = await _storageService.AddRaffleEntryAsync(entry);
+
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log the error if an error occurrs
+                sid = ex.Message;
+            }
+
+            return new OkObjectResult(sid);
 
         }
     }

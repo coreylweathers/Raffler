@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "raffler", "raffler\raffler.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "api", "api\api.csproj", "{BF46DD68-0B2C-4F2D-90E6-D9D1660346BD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "shared", "shared\shared.csproj", "{FA5E2776-E033-4857-A362-9537DA9B68FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{BF46DD68-0B2C-4F2D-90E6-D9D1660346BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF46DD68-0B2C-4F2D-90E6-D9D1660346BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF46DD68-0B2C-4F2D-90E6-D9D1660346BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA5E2776-E033-4857-A362-9537DA9B68FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA5E2776-E033-4857-A362-9537DA9B68FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA5E2776-E033-4857-A362-9537DA9B68FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA5E2776-E033-4857-A362-9537DA9B68FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

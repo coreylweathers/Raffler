@@ -105,6 +105,11 @@ app {
     color: red;
 }
 
+.prize-img {
+    height: 80px;
+    width: 80px;
+}
+
 @media (max-width: 767.98px) {
     .main .top-row {
         display: none;
