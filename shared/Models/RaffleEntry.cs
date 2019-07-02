@@ -7,9 +7,8 @@ namespace shared.Models
 {
     public class RaffleEntry
     {
-        public string Digits { get; set; }
         public string MessageSid { get; set; }
-        public string EmailAddress { get; set; }
+        public string EmailAddress { get; set; } = string.Empty;
         public DateTime TimeStamp { get; set; } = DateTime.UtcNow;
     }
 }

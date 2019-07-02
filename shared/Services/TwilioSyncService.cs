@@ -60,7 +60,6 @@ namespace shared.Services
                    .Select(entry => JObject.Parse(entry))
                    .Select(json => new RaffleEntry
                    {
-                       Digits = json["entry"]["Digits"].ToString(),
                        EmailAddress = json["entry"]["EmailAddress"].ToString(),
                        MessageSid = json["entry"]["MessageSid"].ToString(),
                        TimeStamp = Convert.ToDateTime(json["entry"]["TimeStamp"].ToString())

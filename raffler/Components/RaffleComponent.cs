@@ -4,6 +4,8 @@ using shared.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using System;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace raffler.Components
 {
@@ -11,12 +13,36 @@ namespace raffler.Components
     {
         [Inject]
         protected IStorageService StorageService { get; set; }
+        [Inject]
+        protected HubConnectionBuilder HubConnectionBuilder { get; set; }
+
         public readonly string RaffleNumber = "(425) 250-9682";
         public List<RaffleEntry> EntryList { get; set; }
 
-        protected override async Task OnParametersSetAsync()
+        protected override async Task OnInitAsync()
         {
             EntryList = (await StorageService.GetRaffleEntriesAsync()).ToList();
+            await InitalizeSignalRAsync();
+        }
+
+        protected async Task UpdateEntryListAsync(RaffleEntry entry)
+        {
+            // TODO: Replace Console.WriteLine with ILogger
+            Console.WriteLine($"{DateTime.Now}: Adding {entry.MessageSid} to the entry list");
+            await Task.Run(() => EntryList.Add(entry));
+            Console.WriteLine($"{DateTime.Now}: Adding {entry.MessageSid} to the entry list");
+            StateHasChanged();
+        }
+
+        private async Task InitalizeSignalRAsync()
+        {
+            // in Component Initialization code
+            var connection = HubConnectionBuilder // the injected one from above.
+                    .WithUrl("/rafflehub" // The hub URL. If the Hub is hosted on the server where the blazor is hosted, you can just use the relative path.
+                    )
+                    .Build(); // Build the HubConnection
+            connection.On<RaffleEntry>("AddNewRaffleEntry", UpdateEntryListAsync);
+            await connection.StartAsync();
         }
     }
 }

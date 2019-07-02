@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using raffler.Data;
+using raffler.Hubs;
 using shared.Services;
 
 namespace raffler
@@ -29,6 +25,18 @@ namespace raffler
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<IStorageService, TwilioSyncService>();
+
+            services.AddTransient<HubConnectionBuilder>();
+
+            services.AddCors(action =>
+            {
+                action.AddDefaultPolicy(policy => 
+                {
+                    policy.AllowAnyOrigin();
+                    policy.AllowAnyHeader();
+                    policy.AllowAnyMethod();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +53,7 @@ namespace raffler
                 app.UseHsts();
             }
 
+            app.UseCors();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -54,6 +63,7 @@ namespace raffler
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
+                endpoints.MapHub<RaffleHub>("/rafflehub");
             });
         }
     }
