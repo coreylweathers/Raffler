@@ -62,8 +62,8 @@ namespace raffler
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
-                endpoints.MapFallbackToPage("/_Host");
                 endpoints.MapHub<RaffleHub>("/rafflehub");
+                endpoints.MapFallbackToPage("/_Host");
             });
         }
     }

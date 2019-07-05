@@ -19,7 +19,7 @@ namespace api.Controllers
         {
             _storageService = service;
             _connection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:51379/rafflehub")
+                .WithUrl("https://localhost:44311/rafflehub")
                 .Build();
         }
         // POST
@@ -58,14 +58,19 @@ namespace api.Controllers
             var sid = string.Empty;
             try
             {
-                await _connection.StartAsync();                
+                var startConnectionTask = _connection.StartAsync();                
                 sid = await _storageService.AddRaffleEntryAsync(entry);
-                await _connection.InvokeAsync("AddNewRaffleEntry", entry);
+                startConnectionTask.Wait();
+                await _connection.InvokeAsync("AddRaffleEntry", entry);
             }
             catch (Exception ex)
             {
                 // TODO: Log the error if an error occurrs
                 sid = ex.Message;
+            }
+            finally
+            {
+                await _connection.StopAsync();
             }
 
             return new OkObjectResult(sid);

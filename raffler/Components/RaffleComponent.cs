@@ -15,6 +15,8 @@ namespace raffler.Components
         protected IStorageService StorageService { get; set; }
         [Inject]
         protected HubConnectionBuilder HubConnectionBuilder { get; set; }
+        [Inject]
+        protected IUriHelper UriHelper { get; set; }
 
         public readonly string RaffleNumber = "(425) 250-9682";
         public List<RaffleEntry> EntryList { get; set; }
@@ -36,12 +38,12 @@ namespace raffler.Components
 
         private async Task InitalizeSignalRAsync()
         {
+            var uri = new Uri($"{UriHelper.GetBaseUri()}rafflehub");
             // in Component Initialization code
             var connection = HubConnectionBuilder // the injected one from above.
-                    .WithUrl("/rafflehub" // The hub URL. If the Hub is hosted on the server where the blazor is hosted, you can just use the relative path.
-                    )
+                    .WithUrl(uri) // The hub URL. If the Hub is hosted on the server where the blazor is hosted, you can just use the relative path.
                     .Build(); // Build the HubConnection
-            connection.On<RaffleEntry>("AddNewRaffleEntry", UpdateEntryListAsync);
+            connection.On<RaffleEntry>("AddRaffleEntry", UpdateEntryListAsync);
             await connection.StartAsync();
         }
     }

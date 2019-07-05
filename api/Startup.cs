@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using raffler.Hubs;
 
 namespace api
 {
@@ -26,8 +25,6 @@ namespace api
             // Add TwilioSyncService via DI
             services.AddSingleton<IStorageService, TwilioSyncService>();
 
-            // Add SignalR
-            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

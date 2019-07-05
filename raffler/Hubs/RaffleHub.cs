@@ -9,9 +9,9 @@ namespace raffler.Hubs
 {
     public class RaffleHub : Hub
     {
-        public async Task AddNewRaffleEntry(RaffleEntry entry)
+        public async Task AddRaffleEntry(RaffleEntry entry)
         {
-            await Clients.All.SendAsync("addNewRaffleEntry", entry);
+            await Clients.All.SendAsync("AddRaffleEntry", entry);
         }
     }
 }
