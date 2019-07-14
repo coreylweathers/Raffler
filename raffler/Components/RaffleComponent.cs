@@ -23,8 +23,8 @@ namespace raffler.Components
 
         protected override async Task OnInitAsync()
         {
-            EntryList = (await StorageService.GetRaffleEntriesAsync()).ToList();
             await InitalizeSignalRAsync();
+            EntryList = (await StorageService.GetRaffleEntriesAsync()).ToList() ?? new List<RaffleEntry>(); 
         }
 
         protected async Task UpdateEntryListAsync(RaffleEntry entry)
@@ -45,6 +45,36 @@ namespace raffler.Components
                     .Build(); // Build the HubConnection
             connection.On<RaffleEntry>("AddRaffleEntry", UpdateEntryListAsync);
             await connection.StartAsync();
+        }
+
+        protected async Task StartRaffleAsync()
+        {
+            Console.WriteLine($"{DateTime.Now}: Starting the Raffle");
+            await StorageService.StartRaffleAsync();
+            EntryList.Clear();
+            Console.WriteLine($"{DateTime.Now}: Started the Raffle");
+            StateHasChanged();
+        }
+
+        protected async Task StopRaffleAsync()
+        {
+            Console.WriteLine($"{DateTime.Now}: Stopping the Raffle");
+            await StorageService.StopRaffleAsync();
+            Console.WriteLine($"{DateTime.Now}: Stopped the Raffle");
+        }
+
+        protected async Task ClearRafflesAsync()
+        {
+            await StorageService.ClearRafflesAsync();
+        }
+
+        protected async Task SelectRaffleWinnerAsync()
+        {
+            Console.WriteLine($"{DateTime.Now}: Selecting a raffle winner");
+            var result = await StorageService.SelectRaffleWinnerAsync();
+            Console.WriteLine($"{DateTime.Now}: Resulting SID from notifying winner - {result}");
+            Console.WriteLine($"{DateTime.Now}: Selected a raffle winner");
+
         }
     }
 }

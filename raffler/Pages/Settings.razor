@@ -1,7 +1,10 @@
 @page "/settings"
-@inherits raffler.Components.RaffleComponent
+@inherits raffler.Components.SettingsComponent
+@using shared.Models
 <h2>Settings</h2>
 <br />
+<EditForm @Model="SettingsModel" @OnValidSubmit="@HandleValidSubmitAsync">
 
+</EditForm>
 
 

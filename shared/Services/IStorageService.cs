@@ -6,7 +6,13 @@ namespace shared.Services
 {
     public interface IStorageService
     {
+        Task<Raffle> GetCurrentRaffleAsync();
+        Task<string> StopRaffleAsync();
+        Task<string> StartRaffleAsync();
+        Task<string> EndRaffleAsync();
         Task<string> AddRaffleEntryAsync(RaffleEntry entry);
-        Task<IEnumerable<RaffleEntry>> GetRaffleEntriesAsync();
+        Task<IList<RaffleEntry>> GetRaffleEntriesAsync();
+        Task<string> SelectRaffleWinnerAsync();
+        Task ClearRafflesAsync();
     }
 }

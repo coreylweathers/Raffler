@@ -3,24 +3,37 @@
 
 
 <div class="container">
-    <div class="row">
-        <div class="col-12">
+    <div class="row justify-content-start">
+        <div class="col-6">
             <h1>Text Hi to @RaffleNumber</h1>
             <h1>Scan Here to Enter a Raffle</h1>
-            <img src="http://localhost:53059/api/images" />
+            <img src="/images/images.png" alt="Entry Code" />
+            <h1>Here is the next Event's prize</h1>
+            <img class="prize-img" src="/images/lego-women-of-nasa-building-kit-2.jpg" />
+
+            <h2>Click Here to Start a New Raffle</h2>
+            <button class="btn btn-primary" type="button" @onclick="@StartRaffleAsync">Start Raffle</button>
+
+            <h2>Click Here to Stop In Progress Raffle</h2>
+            <button class="btn btn-primary" type="button" @onclick="@StopRaffleAsync">Stop Raffle</button>
+
+
+            <h2>Click Here to Pick a Winner</h2>
+            <button class="btn btn-primary" type="button" @onclick="@SelectRaffleWinnerAsync">Pick Winner</button>
+
+            <h2>Clear the raffles</h2>
+            <button class="btn btn-primary" type="button" @onclick="@ClearRafflesAsync">Clear Raffles</button>
         </div>
-    </div>
-    <div class="row">
         <div class="col-6">
             <h1>List of Entries</h1>
-            @if (EntryList == null)
+            @if (EntryList == null || EntryList.Count == 0)
             {
-                <p><em>Loading...</em></p>
+                <p><em>No Entries Found Yet...</em></p>
             }
             else
             {
                 <ul>
-                    @foreach (var entry in EntryList)
+                    @foreach (var entry in EntryList.OrderByDescending(entry => entry.TimeStamp))
                     {
                         <li>
                             <p>Entry for @entry.MessageSid</p>
@@ -31,8 +44,7 @@
             }
         </div>
         <div class="col-6">
-            <h1>Here is the next Event's prize</h1>
-            <img class="prize-img" src="https://s.yimg.com/aah/computergear/lego-women-of-nasa-building-kit-2.gif" />
+
         </div>
     </div>
 </div>

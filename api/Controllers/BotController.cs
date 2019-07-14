@@ -47,7 +47,6 @@ namespace api.Controllers
         public async Task<IActionResult> PostEntryAsync([FromForm] string memory)
         {
             var json = JObject.Parse(memory);
-            var fromNumber = json["twilio"]["sms"]["From"].ToString();
 
             var entry = new RaffleEntry
             {
