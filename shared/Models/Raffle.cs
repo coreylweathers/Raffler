@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,7 +15,7 @@ namespace shared.Models
         public DateTime? UpdatedDate { get; set; } = DateTime.UtcNow;
         [JsonIgnore]
         public string Sid { get; set; }
-
+        [JsonConverter(typeof(StringEnumConverter))]
         public RaffleState State { get; set; } = RaffleState.NotRunning;
     }
 }

@@ -10,5 +10,7 @@ namespace shared.Models
         public const string ACCOUNTSIDPATH = "Values:Twilio:AccountSid";
         public const string SERVICESIDPATH = "Values:Twilio:ServiceSid";
         public const string AUTHTOKENPATH = "TwilioAuthToken";
+        public const string APIDOMAIN = "Values:Domain:Api";
+        public const string SIGNALRDOMAIN = "Values:Domain:Signalr";
     }
 }

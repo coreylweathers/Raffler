@@ -22,6 +22,7 @@ namespace api
             services.AddControllers()
                 .AddNewtonsoftJson();
 
+
             // Add TwilioSyncService via DI
             services.AddSingleton<IStorageService, TwilioSyncService>();
 

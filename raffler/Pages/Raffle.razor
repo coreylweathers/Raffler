@@ -25,22 +25,33 @@
             <button class="btn btn-primary" type="button" @onclick="@ClearRafflesAsync">Clear Raffles</button>
         </div>
         <div class="col-6">
-            <h1>List of Entries</h1>
-            @if (EntryList == null || EntryList.Count == 0)
-            {
-                <p><em>No Entries Found Yet...</em></p>
-            }
-            else
-            {
-                <ul>
-                    @foreach (var entry in EntryList.OrderByDescending(entry => entry.TimeStamp))
+            @{
+                if (EntryList == null || EntryList.Count == 0)
+                {
+                    <h1>List of Entries</h1>
+                    <p><em>No Entries Found Yet...</em></p>
+                }
+                else
+                {
+                    <h1>List of Entries</h1>
+                    <ul>
+                        @foreach (var entry in EntryList.OrderByDescending(entry => entry.TimeStamp).Take(5))
+                        {
+                            <li>
+                                <p>Entry for @entry.MessageSid</p>
+                                <p>Entry at @entry.TimeStamp</p>
+                            </li>
+                        }
+                    </ul>
+                    Console.WriteLine("Looking for the winner");
+                    var winner = EntryList.FirstOrDefault(entry => entry.IsWinner);
+                    if (winner != null)
                     {
-                        <li>
-                            <p>Entry for @entry.MessageSid</p>
-                            <p>Entry at @entry.TimeStamp</p>
-                        </li>
+                        <br />
+                        <h1>Here is the winning entry</h1>
+                        <p>@winner.MessageSid received at @winner.TimeStamp</p>
                     }
-                </ul>
+                }
             }
         </div>
         <div class="col-6">

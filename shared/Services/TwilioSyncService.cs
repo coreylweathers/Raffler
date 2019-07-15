@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using shared.Models;
 using System;
 using System.Collections.Generic;
@@ -55,17 +56,14 @@ namespace shared.Services
 
         private async Task UpdateSyncService()
         {
+            CurrentRaffle.UpdatedDate = DateTime.UtcNow;
             var updated = await DocumentResource.UpdateAsync(
                             pathServiceSid: ServiceSid,
                             pathSid: CurrentRaffle.Sid,
-                            data: CurrentRaffle);
-            CurrentRaffle.UpdatedDate = updated.DateUpdated;
+                            data: JsonConvert.SerializeObject(CurrentRaffle,Formatting.Indented,new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
         }
 
-        public async Task<IList<RaffleEntry>> GetRaffleEntriesAsync()
-        {
-            return await Task.FromResult(CurrentRaffle.Entries);
-        }
+        public async Task<IList<RaffleEntry>> GetRaffleEntriesAsync() => (CurrentRaffle != null) ? await Task.FromResult(CurrentRaffle.Entries) : (await GetCurrentRaffleAsync()).Entries;
 
         public async Task<string> StartRaffleAsync()
         {
@@ -73,9 +71,10 @@ namespace shared.Services
             // If so end the raffle and start a new raffle
             if (CurrentRaffle.State == RaffleState.Running)
             {
+                CurrentRaffle.Current = false;
                 await EndRaffleAsync();
             }
-            var raffle = new Raffle
+            CurrentRaffle = new Raffle
             {
                 Name = $"Raffle-{DateTime.UtcNow}",
                 State = RaffleState.Running
@@ -83,17 +82,15 @@ namespace shared.Services
 
             var doc = await DocumentResource.CreateAsync(
                 pathServiceSid: ServiceSid,
-                uniqueName: raffle.Name,
-                data: raffle);
-            raffle.Sid = doc.Sid;
-            raffle.CreatedDate = doc.DateCreated;
-            raffle.UpdatedDate = doc.DateUpdated;
-            return doc.Sid;
+                uniqueName: CurrentRaffle.Name,
+                data: JsonConvert.SerializeObject(CurrentRaffle, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
+            CurrentRaffle.Sid = doc.Sid;
+            _notificationSid = String.Empty;
+            return CurrentRaffle.Sid;
         }
 
         public async Task<string> EndRaffleAsync()
         {
-            CurrentRaffle.Current = false;
             CurrentRaffle.State = RaffleState.NotRunning;
 
             await UpdateSyncService();
@@ -124,15 +121,15 @@ namespace shared.Services
             CurrentRaffle =
                 (from doc in documents
                  let temp = JObject.Parse(doc.Data.ToString())
-                 where string.Equals(temp["current"].ToString(), "true", StringComparison.CurrentCultureIgnoreCase)
+                 where string.Equals(temp.GetValue("current",StringComparison.CurrentCultureIgnoreCase).ToString(), "true", StringComparison.CurrentCultureIgnoreCase)
                  select new Raffle
                  {
                      Name = doc.UniqueName,
                      Sid = doc.Sid,
-                     Entries = temp["entries"].Select(entry => JsonConvert.DeserializeObject<RaffleEntry>(entry["entry"].ToString())).ToList(),
+                     Entries = temp.GetValue("entries",StringComparison.CurrentCultureIgnoreCase).Select(entry => JsonConvert.DeserializeObject<RaffleEntry>(entry.ToString())).ToList(),
                      CreatedDate = doc.DateCreated,
                      UpdatedDate = doc.DateUpdated,
-                     State = RaffleState.Running
+                     State = (RaffleState)Enum.Parse(typeof(RaffleState),temp.GetValue("state", StringComparison.CurrentCultureIgnoreCase).ToString())
                  }).FirstOrDefault();
 
             return CurrentRaffle;
@@ -158,6 +155,7 @@ namespace shared.Services
             var rand = new Random().Next(0, CurrentRaffle.Entries.Count);
             var selected = CurrentRaffle.Entries[rand];
             selected.IsWinner = true;
+            CurrentRaffle.State = RaffleState.NotRunning;
 
             await UpdateSyncService();
             return await NotifyRaffleWinnerAsync(selected.MessageSid);

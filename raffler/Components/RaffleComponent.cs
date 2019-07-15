@@ -74,7 +74,7 @@ namespace raffler.Components
             var result = await StorageService.SelectRaffleWinnerAsync();
             Console.WriteLine($"{DateTime.Now}: Resulting SID from notifying winner - {result}");
             Console.WriteLine($"{DateTime.Now}: Selected a raffle winner");
-
+            StateHasChanged();
         }
     }
 }
