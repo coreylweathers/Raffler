@@ -31,20 +31,28 @@ steps:
   inputs:
     command: 'build'
     projects: '**/api/api.csproj'
-    zipAfterPublish: true
 
-- task: PublishBuildArtifacts@1
+- task: DotNetCoreCLI@2
   inputs:
-    PathtoPublish: $(Build.ArtifactStagingDirectory)
-    ArtifactName: 'apidrop'
+    command: publish
+    arguments: '--output $(Build.ArtifactStagingDirectory)'
+    projects: '**/api/api.csproj'
+    modifyOutputPath: true
+    zipAfterPublish: true
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
     projects: '**/raffler/raffler.csproj'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: publish
+    arguments: '--output $(Build.ArtifactStagingDirectory)'
+    projects: '**/raffler/raffler.csproj'
+    modifyOutputPath: true
     zipAfterPublish: true
 
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: $(Build.ArtifactStagingDirectory)
-    ArtifactName: clientdrop
