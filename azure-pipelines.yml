@@ -35,7 +35,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: publish
-    arguments: '--output $(Build.ArtifactStagingDirectory)/api'
+    arguments: '--output $(Build.ArtifactStagingDirectory)'
     projects: '**/api/api.csproj'
     modifyOutputPath: true
     zipAfterPublish: true
@@ -48,7 +48,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: publish
-    arguments: '--output $(Build.ArtifactStagingDirectory)/raffler'
+    arguments: '--output $(Build.ArtifactStagingDirectory)'
     projects: '**/raffler/raffler.csproj'
     modifyOutputPath: true
     zipAfterPublish: true
