@@ -6,6 +6,7 @@ using shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
@@ -18,7 +19,6 @@ namespace shared.Services
         protected string AccountSid { get; set; }
         protected string ServiceSid { get; set; }
         protected Raffle CurrentRaffle { get; set; }
-
 
         private readonly string _authToken;
         private readonly IConfiguration _config;
@@ -60,7 +60,7 @@ namespace shared.Services
             var updated = await DocumentResource.UpdateAsync(
                             pathServiceSid: ServiceSid,
                             pathSid: CurrentRaffle.Sid,
-                            data: JsonConvert.SerializeObject(CurrentRaffle,Formatting.Indented,new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
+                            data: JsonConvert.SerializeObject(CurrentRaffle, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
         }
 
         public async Task<IList<RaffleEntry>> GetRaffleEntriesAsync() => (CurrentRaffle != null) ? await Task.FromResult(CurrentRaffle.Entries) : (await GetCurrentRaffleAsync()).Entries;
@@ -69,7 +69,7 @@ namespace shared.Services
         {
             // Determine if Raffle is in progress
             // If so end the raffle and start a new raffle
-            if (CurrentRaffle.State == RaffleState.Running)
+            if (CurrentRaffle != null && CurrentRaffle.State == RaffleState.Running)
             {
                 CurrentRaffle.Current = false;
                 await EndRaffleAsync();
@@ -79,6 +79,9 @@ namespace shared.Services
                 Name = $"Raffle-{DateTime.UtcNow}",
                 State = RaffleState.Running
             };
+
+            var prize = await SelectRafflePrizeAsync();
+            CurrentRaffle.Prize = prize;
 
             var doc = await DocumentResource.CreateAsync(
                 pathServiceSid: ServiceSid,
@@ -121,16 +124,27 @@ namespace shared.Services
             CurrentRaffle =
                 (from doc in documents
                  let temp = JObject.Parse(doc.Data.ToString())
-                 where string.Equals(temp.GetValue("current",StringComparison.CurrentCultureIgnoreCase).ToString(), "true", StringComparison.CurrentCultureIgnoreCase)
+                 where string.Equals(temp.GetValue("current", StringComparison.CurrentCultureIgnoreCase).ToString(), "true", StringComparison.CurrentCultureIgnoreCase)
                  select new Raffle
                  {
                      Name = doc.UniqueName,
                      Sid = doc.Sid,
-                     Entries = temp.GetValue("entries",StringComparison.CurrentCultureIgnoreCase).Select(entry => JsonConvert.DeserializeObject<RaffleEntry>(entry.ToString())).ToList(),
+                     Entries = temp.GetValue("entries", StringComparison.CurrentCultureIgnoreCase).Select(entry => JsonConvert.DeserializeObject<RaffleEntry>(entry.ToString())).ToList(),
                      CreatedDate = doc.DateCreated,
                      UpdatedDate = doc.DateUpdated,
-                     State = (RaffleState)Enum.Parse(typeof(RaffleState),temp.GetValue("state", StringComparison.CurrentCultureIgnoreCase).ToString())
+                     State = (RaffleState)Enum.Parse(typeof(RaffleState), temp.GetValue("state", StringComparison.CurrentCultureIgnoreCase).ToString()),
+                     Prize = new RafflePrize
+                     {
+                         Name = temp["prize"]["name"].ToString(),
+                         ImageUrl = temp["prize"]["imageUrl"].ToString(),
+                         Quantity = int.Parse(temp["prize"]["quantity"].ToString())
+                     }
                  }).FirstOrDefault();
+
+            if (CurrentRaffle == null)
+            {
+                await StartRaffleAsync();
+            }
 
             return CurrentRaffle;
         }
@@ -156,6 +170,7 @@ namespace shared.Services
             var selected = CurrentRaffle.Entries[rand];
             selected.IsWinner = true;
             CurrentRaffle.State = RaffleState.NotRunning;
+            CurrentRaffle.Prize.Quantity = 0;
 
             await UpdateSyncService();
             return await NotifyRaffleWinnerAsync(selected.MessageSid);
@@ -174,6 +189,33 @@ namespace shared.Services
             _notificationSid = response.Sid;
 
             return _notificationSid;
+        }
+
+        private async Task<RafflePrize> SelectRafflePrizeAsync()
+        {
+            string response = String.Empty;
+            using (var httpClient = new HttpClient())
+            {
+                response = await httpClient.GetStringAsync("https://black-bombay-6404.twil.io/assets/prizes.json");
+            }
+
+            if (String.IsNullOrEmpty(response))
+            {
+                return null;
+            }
+
+            var json = JObject.Parse(response);
+            var prizeList = json["Raffle"].Children()
+                .Select(token =>
+                    new RafflePrize
+                    {
+                        Name = token["Prize"]["Name"].ToString(),
+                        Quantity = int.Parse(token["Prize"]["Quantity"].ToString()),
+                        ImageUrl = token["Prize"]["ImageUrl"].ToString()
+                    })
+                .Where(prize => prize.Quantity > 0).ToList();
+            var selected = new Random().Next(prizeList.Count);
+            return prizeList[selected];
         }
     }
 }

@@ -12,5 +12,6 @@ namespace shared.Models
         public const string AUTHTOKENPATH = "TwilioAuthToken";
         public const string APIDOMAIN = "Values:Domain:Api";
         public const string SIGNALRDOMAIN = "Values:Domain:Signalr";
+        public const string RAFFLEPRIZE = "Values:Raffle";
     }
 }

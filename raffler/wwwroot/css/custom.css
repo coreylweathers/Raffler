@@ -86,6 +86,11 @@
     color: #7AB2DD;
 }
 
+.prize-img {
+    width:300px;
+    height:300px;
+}
+
 footer {
     align-content: center;
 }

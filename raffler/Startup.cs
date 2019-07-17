@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using raffler.Hubs;
+using shared.Models;
 using shared.Services;
 
 namespace raffler

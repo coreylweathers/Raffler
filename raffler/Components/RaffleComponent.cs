@@ -27,21 +27,28 @@ namespace raffler.Components
 
         protected bool IsWinnerButtonEnabled { get; set; }
 
+        protected string PrizeName { get; set; }
+
+        protected string PrizeUrl { get; set; }
+
         protected override async Task OnInitAsync()
         {
             await InitalizeSignalRAsync();
-            EntryList = (await StorageService.GetRaffleEntriesAsync()).ToList() ?? new List<RaffleEntry>();
-        }
-
-        protected override async Task OnParametersSetAsync()
-        {
             var raffle = await StorageService.GetCurrentRaffleAsync();
+            EntryList = (await StorageService.GetRaffleEntriesAsync()).ToList() ?? new List<RaffleEntry>();
+
             IsStartButtonEnabled = raffle.State == RaffleState.NotRunning;
             IsStopButtonEnabled = !IsStartButtonEnabled;
             IsWinnerButtonEnabled = raffle.Entries.Any(entry => entry.IsWinner == false);
             Console.Write($"IsStartButton: {IsStartButtonEnabled}\r\nIsStopButton: {IsStopButtonEnabled}\r\nIsWinnerButton: {IsWinnerButtonEnabled}");
-        }
 
+            if (raffle.Prize != null)
+            {
+                PrizeName = raffle.Prize.Name;
+                PrizeUrl = raffle.Prize.ImageUrl;
+            }
+
+        }
         protected async Task UpdateEntryListAsync(RaffleEntry entry)
         {
             // TODO: Replace Console.WriteLine with ILogger

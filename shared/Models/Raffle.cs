@@ -17,5 +17,7 @@ namespace shared.Models
         public string Sid { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
         public RaffleState State { get; set; } = RaffleState.NotRunning;
+
+        public RafflePrize Prize { get; set; }
     }
 }

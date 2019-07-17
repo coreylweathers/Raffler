@@ -6,13 +6,13 @@
     <nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark">
         <ul class="nav nav-center">
             <li class="nav-item px-3">
-                <button type="button" class="btn btn-primary active" @onclick="@StartRaffleAsync">Start Raffle</button>
+                <button type="button" class="btn btn-primary" @onclick="@StartRaffleAsync">Start Raffle</button>
             </li>
             <li class="nav-item px-3">
-                <button type="button" class="btn btn-primary active" @onclick="@StopRaffleAsync">Stop Raffle</button>
+                <button type="button" class="btn btn-primary" @onclick="@StopRaffleAsync">Stop Raffle</button>
             </li>
             <li class="nav-item px-3">
-                <button type="button" class="btn btn-primary active" @onclick="@SelectRaffleWinnerAsync">Select Winner</button>
+                <button type="button" class="btn btn-primary" @onclick="@SelectRaffleWinnerAsync">Select Winner</button>
             </li>
         </ul>
         <img src="images/twilio-badge-white.png" class="rounded float-right" alt="Powered by Twilio">
@@ -63,7 +63,19 @@
                             }
                         </div>
                         <div class="col-5">
-                            <p>Current Raffle Prize is ...</p>
+                            @{
+                                <h2>Current Raffle Prize</h2>
+                                if (!string.IsNullOrEmpty(PrizeName) && !string.IsNullOrEmpty(PrizeUrl))
+                                {
+                                    <p>@PrizeName</p>
+                                    <hr style="color:white;" />
+                                    <img class="prize-img rounded float-left" src="/images/@(PrizeUrl)" />
+                                }
+                                else
+                                {
+                                    <p>Prize hasn't been selected yet. Stay tuned...</p>
+                                }
+                            }
                         </div>
                     </div>
                 </div>
