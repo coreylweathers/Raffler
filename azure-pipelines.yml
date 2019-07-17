@@ -35,8 +35,8 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    publishLocation: FilePath
-    TargetPath: 'api'
+    PathtoPublish: $(Build.ArtifactStagingDirectory)
+    ArtifactName: 'apidrop'
 
 - task: DotNetCoreCLI@2
   inputs:
@@ -46,5 +46,5 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    publishLocation: FilePath
-    TargetPath: 'client'
+    PathtoPublish: $(Build.ArtifactStagingDirectory)
+    ArtifactName: clientdrop
