@@ -1,0 +1,91 @@
+﻿.main {
+    flex: 1;
+}
+
+.background-photo {
+    background-image: url("/images/KCUnionStation.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+.navbar {
+    display: flex;
+}
+
+    .navbar > img {
+        height: 45px;
+        justify-content: flex-end;
+    }
+
+.btn-primary {
+    border-color: #c09a5b !important;
+    background-color: initial !important;
+}
+
+.navbar > button:hover {
+    background-color: #7AB2DD !important;
+}
+
+.content {
+    margin-top: 2em;
+}
+
+.jumbotron {
+    background-color: #362e2c !important;
+    opacity: 0.8;
+    padding: 2rem 1rem;
+}
+
+.welcome-text {
+    color: white;
+}
+
+    .welcome-text > h1 {
+        /*color: #004687;*/
+        color: #7AB2DD;
+    }
+
+.col-10 > .jumbotron {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 3em 2em;
+}
+
+
+.qr-code {
+    width: 200px;
+    height: 200px;
+    background-color: white;
+}
+
+.divider {
+    border-color: #bd9b60;
+    border-width: 3.0px;
+}
+
+.col-5 > .list-group > .list-group-item {
+    color: initial;
+    background-color: #362e2c !important;
+}
+
+    .col-5 > .list-group > .list-group-item.active {
+        color: initial;
+        border: none;
+    }
+
+.col-5 > p {
+    color: white;
+}
+
+.col-5 > h2 {
+    color: #7AB2DD;
+}
+
+footer {
+    align-content: center;
+}

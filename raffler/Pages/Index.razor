@@ -1,5 +1,77 @@
 ﻿@page "/"
+@inherits raffler.Components.RaffleComponent
 
-<h1>Welcome to the Raffle App</h1>
-<br />
-<p class="lead">This app is powered by Twilio, built with Razor, and hosted on Azure.</p>
+
+<div class="background-photo">
+    <nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark">
+        <ul class="nav nav-center">
+            <li class="nav-item px-3">
+                <button type="button" class="btn btn-primary active" @onclick="@StartRaffleAsync">Start Raffle</button>
+            </li>
+            <li class="nav-item px-3">
+                <button type="button" class="btn btn-primary active" @onclick="@StopRaffleAsync">Stop Raffle</button>
+            </li>
+            <li class="nav-item px-3">
+                <button type="button" class="btn btn-primary active" @onclick="@SelectRaffleWinnerAsync">Select Winner</button>
+            </li>
+        </ul>
+        <img src="images/twilio-badge-white.png" class="rounded float-right" alt="Powered by Twilio">
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-10">
+                <div class="jumbotron">
+                    <div class="row">
+                        <div class="col welcome-text">
+                            <h1 class="display-4">Welcome to KCDC</h1>
+                            <p class="lead">Text @RaffleNumber to enter our raffle or scan the QR code here</p>
+                        </div>
+                        <div class="col-3">
+                            <img class="qr-code rounded float-right"
+                                 src="images/QR_code_for_mobile_English_Wikipedia.svg.png" />
+                        </div>
+                    </div>
+                </div>
+                <hr class="divider" />
+                <div class="jumbotron">
+                    <div class="row justify-content-around">
+                        <div class="col-5">
+                            @{
+                                <h2>List of Entries</h2>
+
+                                if (EntryList == null || EntryList.Count == 0)
+                                {
+                                    <p><em>No Entries Found Yet...</em></p>
+                                }
+                                else
+                                {
+                                    <ul class="list-group">
+                                        @foreach (var entry in EntryList.OrderByDescending(entry => entry.TimeStamp).Take(5))
+                                        {
+                                            <li class="list-group-item active">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">New Entry: @entry.MessageSid.Substring(0, 5)</h5>
+                                                        <small>Entered at @entry.TimeStamp.ToLocalTime()</small>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            }
+                        </div>
+                        <div class="col-5">
+                            <p>Current Raffle Prize is ...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+    <footer>
+        <p>All Rights Reserved.</p>
+    </footer>
+</div>
