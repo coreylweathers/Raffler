@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Rest.Sync.V1.Service;
+using Twilio.Types;
 
 namespace shared.Services
 {
@@ -69,19 +70,24 @@ namespace shared.Services
         {
             // Determine if Raffle is in progress
             // If so end the raffle and start a new raffle
+            List<RaffleEntry> tempEntries = (CurrentRaffle?.Entries ?? await GetLastRaffleEntriesAsync())
+                .Where(entry => !entry.IsWinner)
+                .Where(entry => !string.Equals(entry.EmailAddress, "c@w.com", StringComparison.CurrentCultureIgnoreCase))
+                .ToList();
             if (CurrentRaffle != null && CurrentRaffle.State == RaffleState.Running)
             {
-                CurrentRaffle.Current = false;
                 await EndRaffleAsync();
             }
+            var prize = await SelectRafflePrizeAsync();
             CurrentRaffle = new Raffle
             {
                 Name = $"Raffle-{DateTime.UtcNow}",
-                State = RaffleState.Running
+                State = RaffleState.Running,
+                Entries = tempEntries,
+                Prize = prize
             };
-
-            var prize = await SelectRafflePrizeAsync();
-            CurrentRaffle.Prize = prize;
+            tempEntries = null;
+            await NotifyRaffleReentrantsAsync();
 
             var doc = await DocumentResource.CreateAsync(
                 pathServiceSid: ServiceSid,
@@ -95,6 +101,7 @@ namespace shared.Services
         public async Task<string> EndRaffleAsync()
         {
             CurrentRaffle.State = RaffleState.NotRunning;
+            CurrentRaffle.Current = false;
 
             await UpdateSyncService();
 
@@ -114,6 +121,28 @@ namespace shared.Services
                     pathServiceSid: ServiceSid,
                     pathSid: sid);
             }
+        }
+
+        public async Task<List<RaffleEntry>> GetLastRaffleEntriesAsync()
+        {
+            var doc = (await DocumentResource.ReadAsync(pathServiceSid: ServiceSid)).OrderByDescending(x => x.DateUpdated).FirstOrDefault();
+            var temp = JObject.Parse(doc.Data.ToString());
+            var raffle = new Raffle
+            {
+                Name = doc.UniqueName,
+                Sid = doc.Sid,
+                Entries = temp.GetValue("entries", StringComparison.CurrentCultureIgnoreCase).Select(entry => JsonConvert.DeserializeObject<RaffleEntry>(entry.ToString())).ToList(),
+                CreatedDate = doc.DateCreated,
+                UpdatedDate = doc.DateUpdated,
+                State = (RaffleState)Enum.Parse(typeof(RaffleState), temp.GetValue("state", StringComparison.CurrentCultureIgnoreCase).ToString()),
+                Prize = new RafflePrize
+                {
+                    Name = temp["prize"]["name"].ToString(),
+                    ImageUrl = temp["prize"]["imageUrl"].ToString(),
+                    Quantity = int.Parse(temp["prize"]["quantity"].ToString())
+                }
+            };
+            return raffle.Entries;
         }
 
         public async Task<Raffle> GetCurrentRaffleAsync()
@@ -216,6 +245,38 @@ namespace shared.Services
                 .Where(prize => prize.Quantity > 0).ToList();
             var selected = new Random().Next(prizeList.Count);
             return prizeList[selected];
+        }
+
+        private async Task NotifyRaffleReentrantsAsync()
+        {
+            await RemoveDuplicateEntriesAsync();
+            await Task.Run(() => Parallel.ForEach(CurrentRaffle.Entries, async entry =>
+            {
+                var resource = await MessageResource.FetchAsync(pathSid: entry.MessageSid);
+                var url = new Uri($"https://corey.ngrok.io/images/{CurrentRaffle.Prize.ImageUrl}");
+                var msg = await MessageResource.CreateAsync(
+                    to: resource.From,
+                    from: new PhoneNumber(resource.To),
+                    body: $"Greetings from Twilio. Looks like you didn't win the last raffle but don't worry. We've re-entered you into the next one to win this prize: {CurrentRaffle.Prize.Name}. Good luck and keep an eye out to see if you've won the prize",
+                    mediaUrl: new List<Uri> { url });
+            }));
+        }
+
+        private async Task RemoveDuplicateEntriesAsync()
+        {
+            var flaggedEntries = new List<RaffleEntry>();
+
+            foreach (var entry in CurrentRaffle.Entries)
+            {
+                var recipient = (await MessageResource.FetchAsync(
+                    pathSid: entry.MessageSid)).From;
+                if (flaggedEntries.Any(num => string.Equals(num.ToString(), recipient.ToString(), StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    flaggedEntries.Add(entry);
+                }
+            }
+
+            CurrentRaffle.Entries = CurrentRaffle.Entries.Except(flaggedEntries).ToList();
         }
     }
 }

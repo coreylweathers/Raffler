@@ -29,7 +29,7 @@
                         </div>
                         <div class="col-3">
                             <img class="qr-code rounded float-right"
-                                 src="images/QR_code_for_mobile_English_Wikipedia.svg.png" />
+                                 src="images/images.png" />
                         </div>
                     </div>
                 </div>
@@ -38,7 +38,6 @@
                     <div class="row justify-content-around">
                         <div class="col-5">
                             @{
-                                <h2>List of Entries</h2>
 
                                 if (EntryList == null || EntryList.Count == 0)
                                 {
@@ -46,8 +45,12 @@
                                 }
                                 else
                                 {
+                                    <h2>Total Entries: @EntryList.Count</h2>
+
+
+                                    <h2>Last 3 Entries</h2>
                                     <ul class="list-group">
-                                        @foreach (var entry in EntryList.OrderByDescending(entry => entry.TimeStamp).Take(5))
+                                        @foreach (var entry in EntryList.OrderByDescending(entry => entry.TimeStamp).Take(3))
                                         {
                                             <li class="list-group-item active">
                                                 <div class="card">

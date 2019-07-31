@@ -9,6 +9,8 @@ using System;
 using System.Threading.Tasks;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
+using Twilio.TwiML;
+using Twilio.TwiML.Messaging;
 
 namespace api.Controllers
 {
@@ -62,17 +64,16 @@ namespace api.Controllers
 
             var from = json["twilio"]["sms"]["To"].ToString();
             var to = json["twilio"]["sms"]["From"].ToString();
-
-            var sid = string.Empty;
+            JsonResult response = null;
             try
             {
-                sid = await SendRaffleEntryToService(entry);
-                await NotifyRaffleEntrant(from, to, "You've been entered into the raffle. Good luck!");
+                string sid = await SendRaffleEntryToService(entry);
+                response = NotifyRaffleEntrant("You've been entered into the raffle. Good luck!");
             }
             catch (Exception)
             {
                 // TODO: Log the error if an error occurrs
-                await NotifyRaffleEntrant(from, to, "We ran into a problem adding you to the raffle. Sit tight for a few minutes and try again afterwards.");
+                response = NotifyRaffleEntrant("We ran into a problem adding you to the raffle. Sit tight for a few minutes and try again afterwards.");
                 throw;
             }
             finally
@@ -80,7 +81,7 @@ namespace api.Controllers
                 await _connection.StopAsync();
             }
 
-            return new OkObjectResult(sid);
+            return response;
 
         }
 
@@ -112,7 +113,7 @@ namespace api.Controllers
                            {
                                new
                                {
-                                   question = "Did you want to enter the raffle?",
+                                   question = "Hi and Thank you for stopping by the Twilio booth at KCDC. Did you want to enter the raffle? Text in yes or no",
                                    name = "enter_raffle",
                                    type = "Twilio.YES_NO"
                                }
@@ -143,12 +144,21 @@ namespace api.Controllers
             await _connection.InvokeAsync("AddRaffleEntry", entry);
             return sid;
         }
-        private async Task NotifyRaffleEntrant(string from, string to, string body)
+        private JsonResult NotifyRaffleEntrant(string body)
         {
-            await MessageResource.CreateAsync(
-                from: new PhoneNumber(from),
-                to: new PhoneNumber(to),
-                body: body);
+
+            var json = new
+            {
+                actions = new[]
+                {
+                    new
+                    {
+                        say = body
+                    }
+                }
+            };
+
+            return new JsonResult(json);
         }
     }
 }

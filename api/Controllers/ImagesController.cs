@@ -20,7 +20,7 @@ namespace api.Controllers
         public FileContentResult Get()
         {
             _generator = new QRCodeGenerator();
-            QRCodeData qrCodeData = _generator.CreateQrCode("sms:+14252509682", QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrCodeData = _generator.CreateQrCode("sms:+19132706063", QRCodeGenerator.ECCLevel.Q);
             _qrCode = new PngByteQRCode(qrCodeData);
 
             return File(_qrCode.GetGraphic(10), "image/png");
