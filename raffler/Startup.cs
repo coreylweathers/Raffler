@@ -25,7 +25,8 @@ namespace raffler
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<IStorageService, TwilioSyncService>();
+            services.AddSingleton<IRaffleService, TwilioRaffleService>();
+            services.AddSingleton<IStorageUpdater, TwilioSyncUpdater>();
 
             services.AddTransient<HubConnectionBuilder>();
 

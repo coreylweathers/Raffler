@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 
 namespace shared.Services
 {
-    public interface IStorageService
+    public interface IRaffleService 
     {
+        
+        Raffle CurrentRaffle { get; set; }
         Task<Raffle> GetCurrentRaffleAsync();
         Task<string> StopRaffleAsync();
         Task<string> StartRaffleAsync();

@@ -24,7 +24,7 @@ namespace api
 
 
             // Add TwilioSyncService via DI
-            services.AddSingleton<IStorageService, TwilioSyncService>();
+            services.AddSingleton<IRaffleService, TwilioRaffleService>();
 
         }
 

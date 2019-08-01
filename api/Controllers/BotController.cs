@@ -18,13 +18,13 @@ namespace api.Controllers
     [ApiController]
     public class BotController : ControllerBase
     {
-        private readonly IStorageService _storageService;
+        private readonly IRaffleService _raffleService;
         private readonly HubConnection _connection;
         private readonly IConfiguration _config;
 
-        public BotController(IStorageService service, IConfiguration configuration)
+        public BotController(IRaffleService service, IConfiguration configuration)
         {
-            _storageService = service;
+            _raffleService = service;
             _config = configuration;
             _connection = new HubConnectionBuilder()
                 .WithUrl($"{_config[Constants.SIGNALRDOMAIN]}/rafflehub")
@@ -88,7 +88,7 @@ namespace api.Controllers
         [HttpPost("start")]
         public async Task<IActionResult> StartInteractionAsync()
         {
-            var raffle = await _storageService.GetCurrentRaffleAsync();
+            var raffle = await _raffleService.GetCurrentRaffleAsync();
             if (raffle.State == RaffleState.NotRunning)
             {
                 var json = new
@@ -139,7 +139,7 @@ namespace api.Controllers
         private async Task<string> SendRaffleEntryToService(RaffleEntry entry)
         {
             var startConnectionTask = _connection.StartAsync();
-            var sid = await _storageService.AddRaffleEntryAsync(entry);
+            var sid = await _raffleService.AddRaffleEntryAsync(entry);
             startConnectionTask.Wait();
             await _connection.InvokeAsync("AddRaffleEntry", entry);
             return sid;

@@ -15,28 +15,28 @@ using Twilio.Types;
 
 namespace shared.Services
 {
-    public class TwilioSyncService : IStorageService
+    public class TwilioRaffleService : IRaffleService
     {
-        protected string AccountSid { get; set; }
-        protected string ServiceSid { get; set; }
-        protected Raffle CurrentRaffle { get; set; }
+        private string AccountSid { get; set; }
+        private string ServiceSid { get; set; }
+        public Raffle CurrentRaffle { get; set; }
 
         private readonly string _authToken;
-        private readonly IConfiguration _config;
         private readonly Task _initializingTask;
         private string _notificationSid;
-        public TwilioSyncService(IConfiguration config)
+        private IStorageUpdater _storageUpdater;
+        
+        public TwilioRaffleService(IStorageUpdater storageUpdater, IConfiguration config)
         {
-            _config = config;
-            AccountSid = _config[Constants.ACCOUNTSIDPATH];
-            ServiceSid = _config[Constants.SERVICESIDPATH];
-            // TODO: Ensure AuthToken can be grabbed from multiple places
-            _authToken = _config[Constants.AUTHTOKENPATH];
+            _storageUpdater = storageUpdater;
+            AccountSid = config[Constants.ACCOUNTSIDPATH];
+            ServiceSid = config[Constants.SERVICESIDPATH];
+            _authToken = config[Constants.AUTHTOKENPATH];
             _initializingTask = StartConnection();
             Task.WaitAll();
         }
 
-        protected async Task StartConnection()
+        private async Task StartConnection()
         {
             TwilioClient.Init(AccountSid, _authToken);
             CurrentRaffle = await GetCurrentRaffleAsync();
@@ -46,23 +46,24 @@ namespace shared.Services
         {
             if (CurrentRaffle.State == RaffleState.NotRunning)
             {
+                // TODO: Refactor this to remove the start raffle async 
                 await StartRaffleAsync();
             }
 
             CurrentRaffle.Entries.Add(entry);
-            await UpdateSyncService();
+            CurrentRaffle.UpdatedDate = DateTime.UtcNow;
+
+            await _storageUpdater.UpdateStorage(ServiceSid, AccountSid, CurrentRaffle);
 
             return CurrentRaffle.Sid;
         }
 
-        private async Task UpdateSyncService()
+        protected async Task UpdateSyncService()
         {
-            CurrentRaffle.UpdatedDate = DateTime.UtcNow;
-            var updated = await DocumentResource.UpdateAsync(
-                            pathServiceSid: ServiceSid,
-                            pathSid: CurrentRaffle.Sid,
-                            data: JsonConvert.SerializeObject(CurrentRaffle, Formatting.Indented, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }));
+          
         }
+        
+        
 
         public async Task<IList<RaffleEntry>> GetRaffleEntriesAsync() => (CurrentRaffle != null) ? await Task.FromResult(CurrentRaffle.Entries) : (await GetCurrentRaffleAsync()).Entries;
 

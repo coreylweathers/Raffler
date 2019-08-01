@@ -12,7 +12,7 @@ namespace raffler.Components
     public class RaffleComponent : ComponentBase
     {
         [Inject]
-        protected IStorageService StorageService { get; set; }
+        protected IRaffleService RaffleService { get; set; }
         [Inject]
         protected HubConnectionBuilder HubConnectionBuilder { get; set; }
         [Inject]
@@ -34,8 +34,8 @@ namespace raffler.Components
         protected override async Task OnInitAsync()
         {
             await InitalizeSignalRAsync();
-            var raffle = await StorageService.GetCurrentRaffleAsync();
-            EntryList = (await StorageService.GetRaffleEntriesAsync()).ToList() ?? new List<RaffleEntry>();
+            var raffle = await RaffleService.GetCurrentRaffleAsync();
+            EntryList = (await RaffleService.GetRaffleEntriesAsync()).ToList() ?? new List<RaffleEntry>();
 
             IsStartButtonEnabled = raffle.State == RaffleState.NotRunning;
             IsStopButtonEnabled = !IsStartButtonEnabled;
@@ -62,7 +62,7 @@ namespace raffler.Components
         protected async Task StartRaffleAsync()
         {
             Console.WriteLine($"{DateTime.Now}: Starting the Raffle");
-            await StorageService.StartRaffleAsync();
+            await RaffleService.StartRaffleAsync();
             EntryList.Clear();
             Console.WriteLine($"{DateTime.Now}: Started the Raffle");
             ToggleEnabledButtons(false, true, true);
@@ -72,7 +72,7 @@ namespace raffler.Components
         protected async Task StopRaffleAsync()
         {
             Console.WriteLine($"{DateTime.Now}: Stopping the Raffle");
-            await StorageService.StopRaffleAsync();
+            await RaffleService.StopRaffleAsync();
             Console.WriteLine($"{DateTime.Now}: Stopped the Raffle");
             ToggleEnabledButtons(true, false, true);
             StateHasChanged();
@@ -80,13 +80,13 @@ namespace raffler.Components
 
         protected async Task ClearRafflesAsync()
         {
-            await StorageService.ClearRafflesAsync();
+            await RaffleService.ClearRafflesAsync();
         }
 
         protected async Task SelectRaffleWinnerAsync()
         {
             Console.WriteLine($"{DateTime.Now}: Selecting a raffle winner");
-            var result = await StorageService.SelectRaffleWinnerAsync();
+            var result = await RaffleService.SelectRaffleWinnerAsync();
             Console.WriteLine($"{DateTime.Now}: Resulting SID from notifying winner - {result}");
             Console.WriteLine($"{DateTime.Now}: Selected a raffle winner");
             ToggleEnabledButtons(true, false, false);
