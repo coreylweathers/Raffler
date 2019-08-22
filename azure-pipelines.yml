@@ -35,7 +35,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: publish
-    arguments: '--output $(Build.ArtifactStagingDirectory)/api'
+    arguments: '-r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)/api'
     projects: '**/api/api.csproj'
     modifyOutputPath: true
     zipAfterPublish: true
