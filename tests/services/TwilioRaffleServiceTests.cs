@@ -44,6 +44,9 @@ namespace tests.services
             Assert.IsTrue(currentRaffle.Entries.Count == 1);
             Assert.AreEqual(currentRaffle.Entries[0], entry);
         }
+        
+        [TestMethod]
+        public async 
 
         [ClassCleanup]
         public void TeardownClass()
