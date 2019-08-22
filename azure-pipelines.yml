@@ -48,7 +48,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: publish
-    arguments: '--output $(Build.ArtifactStagingDirectory)/raffler'
+    arguments: '-r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)/raffler'
     projects: '**/raffler/raffler.csproj'
     modifyOutputPath: true
     zipAfterPublish: true
