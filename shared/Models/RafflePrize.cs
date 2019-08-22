@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace shared.Models
+﻿namespace shared.Models
 {
     public class RafflePrize
     {
@@ -11,5 +7,7 @@ namespace shared.Models
         public string ImageUrl { get; set; }
 
         public int Quantity { get; set; }
+        
+        public bool IsSelectedPrize { get; set; }
     }
 }

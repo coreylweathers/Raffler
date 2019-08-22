@@ -11,45 +11,50 @@ namespace raffler.Components
 {
     public class RaffleComponent : ComponentBase
     {
-        [Inject]
-        protected IRaffleService RaffleService { get; set; }
-        [Inject]
-        protected HubConnectionBuilder HubConnectionBuilder { get; set; }
-        [Inject]
-        protected IUriHelper UriHelper { get; set; }
+        [Inject] private IRaffleService RaffleService { get; set; }
+        [Inject] private IPrizeService PrizeService { get; set; }
+        [Inject] private HubConnectionBuilder HubConnectionBuilder { get; set; }
+        [Inject] private IUriHelper UriHelper { get; set; }
 
         protected readonly string RaffleNumber = "(913) 270-6063";
         protected List<RaffleEntry> EntryList { get; set; }
 
-        protected bool IsStartButtonEnabled { get; set; }
+        private bool _isStartButtonEnabled;
 
-        protected bool IsStopButtonEnabled { get; set; }
+        private bool _isStopButtonEnabled;
 
-        protected bool IsWinnerButtonEnabled { get; set; }
+        private bool _isWinnerButtonEnabled;
 
-        protected string PrizeName { get; set; }
+        protected string PrizeName { get; private set; }
 
-        protected string PrizeUrl { get; set; }
+        protected string PrizeUrl { get; private set; }
 
-        protected override async Task OnInitAsync()
+        protected override async Task OnInitializedAsync()
         {
             await InitalizeSignalRAsync();
-            var raffle = await RaffleService.GetCurrentRaffleAsync();
-            EntryList = (await RaffleService.GetRaffleEntriesAsync()).ToList() ?? new List<RaffleEntry>();
-
-            IsStartButtonEnabled = raffle.State == RaffleState.NotRunning;
-            IsStopButtonEnabled = !IsStartButtonEnabled;
-            IsWinnerButtonEnabled = raffle.Entries.Any(entry => entry.IsWinner == false);
-            Console.Write($"IsStartButton: {IsStartButtonEnabled}\r\nIsStopButton: {IsStopButtonEnabled}\r\nIsWinnerButton: {IsWinnerButtonEnabled}");
-
-            if (raffle.Prize != null)
+            if (RaffleService.LatestRaffle == null)
             {
-                PrizeName = raffle.Prize.Name;
-                PrizeUrl = raffle.Prize.ImageUrl;
+                await RaffleService.InitializeService();
+            }
+            EntryList = RaffleService.LatestRaffle?.Entries?.ToList() ?? new List<RaffleEntry>();
+
+            if (RaffleService.LatestRaffle != null)
+            {
+                _isStartButtonEnabled = RaffleService.LatestRaffle.State == RaffleState.NotRunning;
+                _isStopButtonEnabled = !_isStartButtonEnabled;
+                _isWinnerButtonEnabled = RaffleService.LatestRaffle.Entries.Any(entry => entry.IsWinner == false);
+                Console.Write($"IsStartButton: {_isStartButtonEnabled}\r\nIsStopButton: {_isStopButtonEnabled}\r\nIsWinnerButton: {_isWinnerButtonEnabled}");
+
+                if (RaffleService.LatestRaffle.Prize != null)
+                {
+                    PrizeName = RaffleService.LatestRaffle.Prize.Name;
+                    PrizeUrl = RaffleService.LatestRaffle.Prize.ImageUrl;
+                }
             }
 
         }
-        protected async Task UpdateEntryListAsync(RaffleEntry entry)
+
+        private async Task UpdateEntryListAsync(RaffleEntry entry)
         {
             // TODO: Replace Console.WriteLine with ILogger
             Console.WriteLine($"{DateTime.Now}: Adding {entry.MessageSid} to the entry list");
@@ -62,7 +67,7 @@ namespace raffler.Components
         protected async Task StartRaffleAsync()
         {
             Console.WriteLine($"{DateTime.Now}: Starting the Raffle");
-            await RaffleService.StartRaffleAsync();
+            await RaffleService.StartRaffle();
             EntryList.Clear();
             Console.WriteLine($"{DateTime.Now}: Started the Raffle");
             ToggleEnabledButtons(false, true, true);
@@ -72,7 +77,7 @@ namespace raffler.Components
         protected async Task StopRaffleAsync()
         {
             Console.WriteLine($"{DateTime.Now}: Stopping the Raffle");
-            await RaffleService.StopRaffleAsync();
+            await RaffleService.StopRaffle();
             Console.WriteLine($"{DateTime.Now}: Stopped the Raffle");
             ToggleEnabledButtons(true, false, true);
             StateHasChanged();
@@ -80,13 +85,13 @@ namespace raffler.Components
 
         protected async Task ClearRafflesAsync()
         {
-            await RaffleService.ClearRafflesAsync();
+            await RaffleService.ClearRaffles();
         }
 
         protected async Task SelectRaffleWinnerAsync()
         {
             Console.WriteLine($"{DateTime.Now}: Selecting a raffle winner");
-            var result = await RaffleService.SelectRaffleWinnerAsync();
+            var result = await RaffleService.SelectRaffleWinner();
             Console.WriteLine($"{DateTime.Now}: Resulting SID from notifying winner - {result}");
             Console.WriteLine($"{DateTime.Now}: Selected a raffle winner");
             ToggleEnabledButtons(true, false, false);
@@ -95,9 +100,9 @@ namespace raffler.Components
 
         private void ToggleEnabledButtons(bool enableStart, bool enableStop, bool enableWinner)
         {
-            IsStartButtonEnabled = enableStart;
-            IsStopButtonEnabled = enableStop;
-            IsWinnerButtonEnabled = enableWinner;
+            _isStartButtonEnabled = enableStart;
+            _isStopButtonEnabled = enableStop;
+            _isWinnerButtonEnabled = enableWinner;
         }
 
         private async Task InitalizeSignalRAsync()

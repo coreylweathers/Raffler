@@ -6,15 +6,12 @@ namespace shared.Services
 {
     public interface IRaffleService 
     {
-        
-        Raffle CurrentRaffle { get; set; }
-        Task<Raffle> GetCurrentRaffleAsync();
-        Task<string> StopRaffleAsync();
-        Task<string> StartRaffleAsync();
-        Task<string> EndRaffleAsync();
-        Task<string> AddRaffleEntryAsync(RaffleEntry entry);
-        Task<IList<RaffleEntry>> GetRaffleEntriesAsync();
-        Task<string> SelectRaffleWinnerAsync();
-        Task ClearRafflesAsync();
+        Raffle LatestRaffle { get; set; }
+        Task InitializeService();
+        Task StopRaffle();
+        Task StartRaffle();
+        Task<string> AddRaffleEntry(RaffleEntry entry);
+        Task<string> SelectRaffleWinner();
+        Task ClearRaffles();
     }
 }

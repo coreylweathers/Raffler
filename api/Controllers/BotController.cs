@@ -1,16 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using shared.Models;
 using shared.Services;
 using System;
 using System.Threading.Tasks;
-using Twilio.Rest.Api.V2010.Account;
-using Twilio.Types;
-using Twilio.TwiML;
-using Twilio.TwiML.Messaging;
 
 namespace api.Controllers
 {
@@ -27,7 +22,7 @@ namespace api.Controllers
             _raffleService = service;
             _config = configuration;
             _connection = new HubConnectionBuilder()
-                .WithUrl($"{_config[Constants.SIGNALRDOMAIN]}/rafflehub")
+                .WithUrl($"{_config[Constants.SIGNAL_R_DOMAIN]}/rafflehub")
                 .Build();
         }
         // POST
@@ -58,21 +53,18 @@ namespace api.Controllers
 
             var entry = new RaffleEntry
             {
-                MessageSid = json["twilio"]["sms"]["MessageSid"].ToString(),
-                EmailAddress = json["twilio"]["collected_data"]["ask_email_address"]["answers"]["email_address"]["answer"].ToString()
+                MessageSid = json["twilio"]["sms"]["MessageSid"].ToString()
             };
 
-            var from = json["twilio"]["sms"]["To"].ToString();
-            var to = json["twilio"]["sms"]["From"].ToString();
             JsonResult response = null;
             try
             {
-                string sid = await SendRaffleEntryToService(entry);
+                var sid = await SendRaffleEntryToService(entry);
                 response = NotifyRaffleEntrant("You've been entered into the raffle. Good luck!");
             }
             catch (Exception)
             {
-                // TODO: Log the error if an error occurrs
+                // TODO: Log the error if an error occurs
                 response = NotifyRaffleEntrant("We ran into a problem adding you to the raffle. Sit tight for a few minutes and try again afterwards.");
                 throw;
             }
@@ -88,8 +80,7 @@ namespace api.Controllers
         [HttpPost("start")]
         public async Task<IActionResult> StartInteractionAsync()
         {
-            var raffle = await _raffleService.GetCurrentRaffleAsync();
-            if (raffle.State == RaffleState.NotRunning)
+            if (_raffleService.LatestRaffle.State == RaffleState.NotRunning)
             {
                 var json = new
                 {
@@ -123,7 +114,7 @@ namespace api.Controllers
                                redirect = new
                                {
                                    method = "POST",
-                                   uri = $"{_config[Constants.APIDOMAIN]}/api/bot"
+                                   uri = $"{_config[Constants.API_DOMAIN]}/api/bot"
                                }
                            }
                        }
@@ -139,7 +130,7 @@ namespace api.Controllers
         private async Task<string> SendRaffleEntryToService(RaffleEntry entry)
         {
             var startConnectionTask = _connection.StartAsync();
-            var sid = await _raffleService.AddRaffleEntryAsync(entry);
+            var sid = await _raffleService.AddRaffleEntry(entry);
             startConnectionTask.Wait();
             await _connection.InvokeAsync("AddRaffleEntry", entry);
             return sid;

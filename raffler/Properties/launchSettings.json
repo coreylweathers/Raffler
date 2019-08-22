@@ -12,6 +12,7 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
+        "TwilioAuthToken": "c460d3f95237ec708208966f377b8fa9",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },

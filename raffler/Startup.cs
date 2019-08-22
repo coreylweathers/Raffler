@@ -7,17 +7,13 @@ using Microsoft.Extensions.Hosting;
 using raffler.Hubs;
 using shared.Models;
 using shared.Services;
+using System;
 
 namespace raffler
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
+        public Startup(IConfiguration config) { }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -25,8 +21,11 @@ namespace raffler
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<IRaffleService, TwilioRaffleService>();
-            services.AddSingleton<IStorageUpdater, TwilioSyncUpdater>();
+
+            services.AddSingleton<IRaffleService, RaffleService>();
+            services.AddSingleton<IPrizeService, PrizeService>();
+            services.AddSingleton<IRaffleStorageService,TwilioRaffleStorageService>();
+            services.AddSingleton<IPrizeStorageService, TwilioPrizeStorageService>();
 
             services.AddTransient<HubConnectionBuilder>();
 
@@ -34,6 +33,7 @@ namespace raffler
             {
                 action.AddDefaultPolicy(policy => 
                 {
+                    // TODO: Refine CORS method to restrict origin to list in appsettings
                     policy.AllowAnyOrigin();
                     policy.AllowAnyHeader();
                     policy.AllowAnyMethod();
