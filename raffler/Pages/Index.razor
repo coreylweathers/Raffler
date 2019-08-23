@@ -6,13 +6,16 @@
     <nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark">
         <ul class="nav nav-center">
             <li class="nav-item px-3">
-                <button type="button" class="btn btn-primary" @onclick="@StartRaffleAsync">Start Raffle</button>
+                <button type="button" class="btn btn-primary" @onclick="@StartRaffle">Start Raffle</button>
             </li>
             <li class="nav-item px-3">
-                <button type="button" class="btn btn-primary" @onclick="@StopRaffleAsync">Stop Raffle</button>
+                <button type="button" class="btn btn-primary" @onclick="@StopRaffle">Stop Raffle</button>
             </li>
             <li class="nav-item px-3">
-                <button type="button" class="btn btn-primary" @onclick="@SelectRaffleWinnerAsync">Select Winner</button>
+                <button type="button" class="btn btn-primary" @onclick="@SelectRaffleWinner">Select Winner</button>
+            </li>
+            <li class="nav-item px-3">
+                <button type="button" class="btn btn-primary" @onclick="@ShowAddPrizeModal">Add Prize</button>
             </li>
         </ul>
         <img src="images/twilio-badge-white.png" class="rounded float-right" alt="Powered by Twilio">

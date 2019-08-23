@@ -8,5 +8,6 @@
         public const string AUTH_TOKEN_PATH = "TwilioAuthToken";
         public const string API_DOMAIN = "Values:Domain:Api";
         public const string SIGNAL_R_DOMAIN = "Values:Domain:Signalr";
+        public const string SYNC_SERVICE_LIST_SID_PATH = "Values:Twilio:SyncServiceListSid";
     }
 }

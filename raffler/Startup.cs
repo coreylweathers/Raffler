@@ -1,3 +1,4 @@
+using Blazored.Modal;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -21,6 +22,7 @@ namespace raffler
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddBlazoredModal();
 
             services.AddSingleton<IRaffleService, RaffleService>();
             services.AddSingleton<IPrizeService, PrizeService>();

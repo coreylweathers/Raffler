@@ -8,6 +8,8 @@
 
   <ItemGroup>
     
+    <PackageReference Include="Blazored.Modal" Version="2.0.6" />
+    
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="3.0.0-preview8.19405.7" />
     
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0-preview8.19405.4" />
@@ -18,10 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\shared\shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services" />
   </ItemGroup>
 
 </Project>

@@ -7,9 +7,12 @@ namespace shared.Services
     //TODO: Replace with a factory which can resolve the storage update service and rename to IStorageUpdater
     public interface IPrizeStorageService
     {
-        Task<object> CreateStorage(string serviceId, string raffleName, object data);
-        Task UpdateStorage(string serviceId, string id, object data);
-        Task<object> FindItemByName(string serviceId, string itemName);
-        Task<IList<RafflePrize>> GetItems();
+        bool IsInitialized { get; set; }
+        Task InitializeService();
+        Task<object> CreateRepository();
+        Task<int> AddItemToRepository(RafflePrize data);
+        Task UpdateRepository(int index, RafflePrize data);
+        Task<RafflePrize> FindItemByName(string itemName);
+        Task<IDictionary<int, RafflePrize>> GetItems();
     }
 }

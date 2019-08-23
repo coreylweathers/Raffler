@@ -7,6 +7,7 @@ using Twilio;
 using Twilio.Rest.Sync.V1.Service;
 using Twilio.Rest.Sync.V1.Service.SyncList;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace shared.Services
 {
@@ -18,44 +19,64 @@ namespace shared.Services
         private readonly string _twilioSyncServiceSid;
         private string _twilioSyncListSid;
 
+        public bool IsInitialized { get; set; }
+
         public TwilioPrizeStorageService(IConfiguration config)
         {
             _config = config;
             _twilioAccountSid = _config[Constants.ACCOUNT_SID_PATH];
             _twilioAuthToken = _config[Constants.AUTH_TOKEN_PATH];
             _twilioSyncServiceSid = _config[Constants.SYNC_SERVICE_SID_PATH];
-            //TwilioClient.Init(_twilioAccountSid, _twilioAuthToken);
+            _twilioSyncListSid = _config[Constants.SYNC_SERVICE_LIST_SID_PATH];
+            TwilioClient.Init(_twilioAccountSid, _twilioAuthToken);
         }
 
-        public async Task<object> CreateStorage(string serviceId, string raffleName, object data)
+        public async Task InitializeService()
+        {
+            if (string.IsNullOrEmpty(_twilioSyncListSid))
+            {
+                await CreateRepository();
+                _config[Constants.SYNC_SERVICE_LIST_SID_PATH] = _twilioSyncListSid;
+            }
+
+            IsInitialized = true;
+        }
+
+        public async Task<object> CreateRepository()
         {
             var response = await SyncListResource.CreateAsync(
-                pathServiceSid: serviceId,
-                uniqueName: raffleName);
+                pathServiceSid: _twilioSyncServiceSid,
+                uniqueName: $"Prize Service {DateTime.UtcNow}");
             _twilioSyncListSid = response.Sid;
 
             return response;
         }
 
-        public Task<object> FindItemByName(string serviceId, string itemName)
+        public Task<RafflePrize> FindItemByName(string itemName)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateStorage(string serviceId, string id, object data)
+        public async Task UpdateRepository(int index, RafflePrize data)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<IList<RafflePrize>> GetItems()
-        {
-            await SyncListItemResource.FetchAsync(
+            var response = await SyncListItemResource.UpdateAsync(
                 pathServiceSid: _twilioSyncServiceSid,
                 pathListSid: _twilioSyncListSid,
-                pathIndex: 1);
-
-            return new List<RafflePrize>();
-            
+                pathIndex: index);
         }
+
+        public async Task<IDictionary<int, RafflePrize>> GetItems()
+        {
+            var results = await SyncListItemResource.ReadAsync(
+                pathServiceSid: _twilioSyncServiceSid,
+                pathListSid: _twilioSyncListSid);
+            return results.ToDictionary(entry => entry.Index.Value, entry => JsonConvert.DeserializeObject<RafflePrize>(JsonConvert.SerializeObject(entry.Data)));
+        }
+
+        public async Task<int> AddItemToRepository(RafflePrize data) => 
+            (await SyncListItemResource.CreateAsync(
+                pathServiceSid: _twilioSyncServiceSid,
+                pathListSid: _twilioSyncListSid,
+                data: data)).Index.Value;
     }
 }

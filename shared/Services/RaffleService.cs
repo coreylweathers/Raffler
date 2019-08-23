@@ -70,7 +70,7 @@ namespace shared.Services
             {
                 Name = $"Raffle-{DateTime.UtcNow}",
                 State = RaffleState.Running,
-                Entries = LatestRaffle.Entries,
+                Entries = LatestRaffle.Entries.Where(entry => !entry.IsWinner).ToList(),
                 Prize = prize
             };
             var doc = (await _storageUpdater.CreateRaffle(LatestRaffle.Name,

@@ -1,0 +1,19 @@
+﻿@inherits raffler.Components.PrizeComponent
+
+<EditForm Model="@Prize" OnValidSubmit="@AddNewPrize">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <p>
+        <label for="name">Prize Name: </label>
+        <InputText id="name" @bind-Value="@Prize.Name" />
+    </p>
+    <p>
+        <label for="imageUrl">Image Url: </label>
+        <InputText id="imageUrl" @bind-Value="@Prize.ImageUrl" />
+    </p>
+    <p>
+        <label for="quantity">Number of Prizes: </label>
+        <InputNumber id="quantity" @bind-Value="@Prize.Quantity" />
+    </p>
+    <button type="submit">Save</button>
+</EditForm>

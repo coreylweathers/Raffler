@@ -6,7 +6,9 @@ namespace shared.Services
 {
     public interface IPrizeService
     {
-        Task AddRafflePrize();
+        bool IsInitialized { get; set; }
+        Task InitializeService();
+        Task AddRafflePrize(RafflePrize prize);
         Task<RafflePrize> GetCurrentPrize();
         Task<RafflePrize> SelectPrize();
         Task<IList<RafflePrize>> GetRafflePrizes();
