@@ -37,7 +37,8 @@ steps:
   displayName: 'Publish API Project'
   inputs:
     command: publish
-    arguments: '/api/api.csproj -r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)\\api'
+    projects: '*/api/api.csproj'
+    arguments: '-r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)\\api'
     modifyOutputPath: true
     zipAfterPublish: true
 
