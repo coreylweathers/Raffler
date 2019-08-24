@@ -34,7 +34,7 @@ steps:
   inputs:
     command: 'publish'
     projects: '**/api/api.csproj'
-    arguments: '-r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)\\api'
+    arguments: '-r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)'
     modifyOutputPath: true
     zipAfterPublish: true
     publishWebProjects: false
@@ -49,10 +49,11 @@ steps:
   displayName: 'Publish Raffler Project'
   inputs:
     command: publish
-    arguments: '-r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)\\raffler'
+    arguments: '-r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)'
     projects: '**/raffler/raffler.csproj'
     modifyOutputPath: true
     zipAfterPublish: true
+    publishWebProjects: false
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Build Artifacts'
