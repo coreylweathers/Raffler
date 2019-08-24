@@ -37,6 +37,7 @@ steps:
     arguments: '-r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)\\api'
     modifyOutputPath: true
     zipAfterPublish: true
+    publishWebProjects: false
 
 - task: DotNetCoreCLI@2
   displayName: 'Build Raffler Project'
