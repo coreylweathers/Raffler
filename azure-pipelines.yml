@@ -28,24 +28,28 @@ steps:
     restoreSolution: '$(solution)'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Build API Project'
   inputs:
     command: 'build'
     projects: '**/api/api.csproj'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Publish API Project'
   inputs:
     command: publish
-    arguments: '-r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)\\api'
     projects: '**/api/api.csproj'
+    arguments: '-r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)\\api'
     modifyOutputPath: true
     zipAfterPublish: true
 
 - task: DotNetCoreCLI@2
+  displayName: 'Build Raffler Project'
   inputs:
     command: 'build'
     projects: '**/raffler/raffler.csproj'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Publish Raffler Project'
   inputs:
     command: publish
     arguments: '-r win-x64 --self-contained true --output $(Build.ArtifactStagingDirectory)\\raffler'
@@ -54,5 +58,6 @@ steps:
     zipAfterPublish: true
 
 - task: PublishBuildArtifacts@1
+  displayName: 'Publish Build Artifacts'
   inputs:
     PathtoPublish: $(Build.ArtifactStagingDirectory)
