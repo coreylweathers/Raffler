@@ -34,7 +34,12 @@ namespace shared.Services
 
         public async Task InitializeService()
         {
-            LatestRaffle = await _storageUpdater.GetLatestRaffle();
+            _logger.LogInformation("Initializing the Raffle Service");
+            if (LatestRaffle == null)
+            {
+                LatestRaffle = await _storageUpdater.GetLatestRaffle();
+            }
+            _logger.LogInformation("Initialized the Raffle Service");
         }
 
         public async Task<string> AddRaffleEntry(RaffleEntry entry)
@@ -58,9 +63,10 @@ namespace shared.Services
         {
             // Determine if Raffle is in progress
             // If so throw an exception so the raffle is ended
+            _logger.LogInformation("Starting a new raffle");
             if (LatestRaffle.State == RaffleState.Running)
             {
-                _logger.LogInformation("There is a Raffle in progress");
+                _logger.LogWarning("There is a Raffle in progress. Stop that raffle first");
                 await Task.CompletedTask;
             }
 
@@ -79,6 +85,7 @@ namespace shared.Services
             LatestRaffle.Sid = doc?.Sid;
             await NotifyRaffleReEntrants();
             _notificationSid = string.Empty;
+            _logger.LogInformation("Started a new raffle");
         }
 
         public async Task ClearRaffles()
@@ -112,6 +119,16 @@ namespace shared.Services
             return await NotifyRaffleWinner(selected.MessageSid);
         }
 
+        public async Task<bool> ContainsPhoneNumber(string phoneNumber)
+        {
+            if (string.IsNullOrEmpty(phoneNumber))
+            {
+                throw new ArgumentNullException(nameof(phoneNumber));
+            }
+
+            return await Task.FromResult(LatestRaffle.Entries.Any(entry => string.Equals(entry.PhoneNumber, phoneNumber, StringComparison.CurrentCultureIgnoreCase)));
+        }
+
         private async Task<string> NotifyRaffleWinner(string messageSid)
         {
             var msg = await MessageResource.FetchAsync(
@@ -129,6 +146,9 @@ namespace shared.Services
 
         private async Task<RafflePrize> SelectRafflePrize()
         {
+            _logger.LogInformation("Selecting a Raffle Prize");
+            var prize = await _prizeService.SelectPrize();
+            /*
             string response = String.Empty;
             using (var httpClient = new HttpClient())
             {
@@ -150,8 +170,9 @@ namespace shared.Services
                         ImageUrl = token["Prize"]["ImageUrl"].ToString()
                     })
                 .Where(prize => prize.Quantity > 0).ToList();
-            var selected = new Random().Next(prizeList.Count);
-            return prizeList[selected];
+            var selected = new Random().Next(prizeList.Count);*/
+            _logger.LogInformation("Selected a Raffle prize");
+            return prize;
         }
 
         private async Task NotifyRaffleReEntrants()

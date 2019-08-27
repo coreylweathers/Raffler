@@ -81,9 +81,11 @@ namespace shared.Services
 
         public async Task<Raffle> GetLatestRaffle()
         {
-            var latestDocument = (await DocumentResource.ReadAsync(pathServiceSid:_serviceSid))
+
+            var latestDocument = (await DocumentResource.ReadAsync(pathServiceSid: _serviceSid))
                 .OrderByDescending(doc => doc.DateCreated)
                 .FirstOrDefault();
+
 
             if (latestDocument == null)
             {

@@ -12,10 +12,15 @@ namespace api.Controllers
 
         // GET api/values
         [HttpGet]
-        public FileContentResult Get()
+        public FileContentResult Get([FromQuery]string number)
         {
+            if (string.IsNullOrEmpty(number))
+            {
+                number = "19132706063";
+            }
+
             _generator = new QRCodeGenerator();
-            QRCodeData qrCodeData = _generator.CreateQrCode("sms:+19132706063", QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrCodeData = _generator.CreateQrCode($"sms:+{number}?body=Hi", QRCodeGenerator.ECCLevel.Q);
             _qrCode = new PngByteQRCode(qrCodeData);
 
             return File(_qrCode.GetGraphic(10), "image/png");

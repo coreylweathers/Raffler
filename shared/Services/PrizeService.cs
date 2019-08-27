@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using shared.Models;
 
 namespace shared.Services
@@ -10,6 +11,12 @@ namespace shared.Services
     {
         private readonly IPrizeStorageService _storageUpdater;
         private IDictionary<int, RafflePrize> _prizes;
+        private readonly ILogger _logger;
+
+        public PrizeService(ILogger<PrizeService> logger)
+        {
+            _logger = logger;
+        }
 
         public bool IsInitialized { get; set; }
 
@@ -28,7 +35,6 @@ namespace shared.Services
             }
             IsInitialized = true;
         }
-
 
         public async Task AddRafflePrize(RafflePrize prize)
         {
@@ -52,9 +58,21 @@ namespace shared.Services
             throw new NotImplementedException();
         }
 
-        public Task<RafflePrize> SelectPrize()
+        public async Task<RafflePrize> SelectPrize()
         {
-            throw new NotImplementedException();
+            _logger.LogInformation("Selecting a prize from the list of eligible prizes");
+            var eligiblePrizes = _prizes.Where(entry => !entry.Value.IsSelectedPrize && entry.Value.Quantity > 0).ToList();
+
+            var index = new Random().Next(0, eligiblePrizes.Count);
+            var selected = eligiblePrizes[index];
+
+            selected.Value.IsSelectedPrize = true;
+
+            await _storageUpdater.UpdateRepository(selected.Key, selected.Value);
+
+            _logger.LogInformation("Selected a prize from the list of eligible prizes: {0}", selected.Value);
+
+            return selected.Value;
         }
 
         public async Task<IList<RafflePrize>> GetRafflePrizes()

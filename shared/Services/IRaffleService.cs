@@ -13,5 +13,6 @@ namespace shared.Services
         Task<string> AddRaffleEntry(RaffleEntry entry);
         Task<string> SelectRaffleWinner();
         Task ClearRaffles();
+        Task<bool> ContainsPhoneNumber(string phoneNumber);
     }
 }
