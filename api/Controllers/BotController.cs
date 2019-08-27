@@ -50,7 +50,7 @@ namespace api.Controllers
             {
                 var sid = await SendRaffleEntryToService(entry);
                 await SendRaffleEntryToZapier(googleData.Name, googleData.Major, googleData.Classification, googleData.GradDate);
-                response = NotifyRaffleEntrant("You've been entered into the raffle. Good luck!");
+                response = NotifyRaffleEntrant("You are now entered into the raffle. We'll send you a text to let you know if you've won. Join us tonight and tomorrow for more exciting events by registering at https://twiliohbcu20x20atauc.splashthat.com/. Good luck 😉!");
             }
             catch (Exception)
             {
