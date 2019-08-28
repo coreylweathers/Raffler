@@ -76,11 +76,12 @@ namespace raffler.Components
         protected async Task StartRaffle()
         {
             Console.WriteLine($"{DateTime.Now}: Starting the Raffle");
-            await RaffleService.StartRaffle();
+            Modal.Show("Confirm Raffle Start", typeof(raffler.Pages.StartRaffleConfirmation));
             EntryList.Clear();
             Console.WriteLine($"{DateTime.Now}: Started the Raffle");
-            ToggleEnabledButtons(false, true, true);
+            //ToggleEnabledButtons(false, true, true);
             StateHasChanged();
+            await Task.CompletedTask;
         }
 
         protected async Task StopRaffle()

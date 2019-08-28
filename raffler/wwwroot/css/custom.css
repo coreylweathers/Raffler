@@ -3,7 +3,7 @@
 }
 
 .background-photo {
-    background-image: url("/images/background.png");
+    background-image: url("/images/background.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     position: absolute;
@@ -23,8 +23,8 @@
     }
 
 .btn-primary {
-    border-color: #c09a5b !important;
-    background-color: initial !important;
+    border-color: #F22F46 !important;
+    background-color: #343a40 !important;
 }
 
 .navbar > button:hover {
@@ -47,7 +47,7 @@
 
     .welcome-text > h1 {
         /*color: #004687;*/
-        color: #7AB2DD;
+        color: #F22F46;
     }
 
 .col-10 > .jumbotron {
@@ -64,7 +64,7 @@
 }
 
 .divider {
-    border-color: #bd9b60;
+    border-color: #F22F46;
     border-width: 3.0px;
 }
 
@@ -83,7 +83,7 @@
 }
 
 .col-5 > h2 {
-    color: #7AB2DD;
+    color: #F22F46;
 }
 
 .prize-img {

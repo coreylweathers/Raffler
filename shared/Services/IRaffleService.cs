@@ -9,7 +9,7 @@ namespace shared.Services
         Raffle LatestRaffle { get; set; }
         Task InitializeService();
         Task StopRaffle();
-        Task StartRaffle();
+        Task StartRaffle(bool reuseEntrants = false);
         Task<string> AddRaffleEntry(RaffleEntry entry);
         Task<string> SelectRaffleWinner();
         Task ClearRaffles();

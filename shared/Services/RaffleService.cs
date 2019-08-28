@@ -64,7 +64,7 @@ namespace shared.Services
             return LatestRaffle.Sid;
         }
 
-        public async Task StartRaffle()
+        public async Task StartRaffle(bool reuseEntrants = false)
         {
             // Determine if Raffle is in progress
             // If so throw an exception so the raffle is ended
@@ -74,22 +74,28 @@ namespace shared.Services
                 _logger.LogWarning("There is a Raffle in progress. Stop that raffle first");
                 await Task.CompletedTask;
             }
-
-            // Select re-entrants to the new raffle
-            var prize = await SelectRafflePrize();
-            LatestRaffle = new Raffle
+            else
             {
-                Name = $"Raffle-{DateTime.UtcNow}",
-                State = RaffleState.Running,
-                Entries = LatestRaffle?.Entries?.Where(x => !x.IsWinner).ToList() ?? new List<RaffleEntry>(),
-                Prize = prize
-            };
-            var doc = (await _storageUpdater.CreateRaffle(LatestRaffle.Name,
-                LatestRaffle)) as DocumentResource;
+                // Select re-entrants to the new raffle
+                var prize = await SelectRafflePrize();
+                LatestRaffle = new Raffle
+                {
+                    Name = $"Raffle-{DateTime.UtcNow}",
+                    State = RaffleState.Running,
+                    Entries = LatestRaffle?.Entries?.Where(x => !x.IsWinner).ToList() ?? new List<RaffleEntry>(),
+                    Prize = prize
+                };
+                var doc = (await _storageUpdater.CreateRaffle(LatestRaffle.Name,
+                    LatestRaffle)) as DocumentResource;
 
-            LatestRaffle.Sid = doc?.Sid;
-            //await NotifyRaffleReEntrants();
-            _notificationSid = string.Empty;
+                LatestRaffle.Sid = doc?.Sid;
+                if (reuseEntrants)
+                {
+                    await NotifyRaffleReEntrants();
+                }
+
+                _notificationSid = string.Empty;
+            }
             _logger.LogInformation("Started a new raffle");
         }
 
@@ -108,20 +114,20 @@ namespace shared.Services
 
         public async Task<string> SelectRaffleWinner()
         {
-            if (!string.IsNullOrEmpty(_notificationSid))
+            if (!string.IsNullOrEmpty(_notificationSid) || LatestRaffle.Entries.Any(entry => entry.IsWinner))
             {
-                return _notificationSid;
+                return _notificationSid ?? "";
             }
 
             var rand = new Random().Next(0, LatestRaffle.Entries.Count);
             var selected = LatestRaffle.Entries[rand];
             selected.IsWinner = true;
             LatestRaffle.State = RaffleState.NotRunning;
-            LatestRaffle.Prize.Quantity = 0;
+            LatestRaffle.Prize.Quantity--;
 
             await _storageUpdater.UpdateRaffle(
                LatestRaffle);
-            return await NotifyRaffleWinner(selected.MessageSid);
+            return await NotifyRaffleWinner(selected);
         }
 
         public async Task<bool> ContainsPhoneNumber(string phoneNumber)
@@ -134,10 +140,10 @@ namespace shared.Services
             return await Task.FromResult(LatestRaffle.Entries.Any(entry => string.Equals(entry.PhoneNumber, phoneNumber, StringComparison.CurrentCultureIgnoreCase)));
         }
 
-        private async Task<string> NotifyRaffleWinner(string messageSid)
+        private async Task<string> NotifyRaffleWinner(RaffleEntry entry)
         {
             var msg = await MessageResource.FetchAsync(
-                messageSid,
+                entry.MessageSid,
                 _accountSid);
 
             var response = await MessageResource.CreateAsync(
@@ -146,6 +152,19 @@ namespace shared.Services
                 body: @"You've won the latest raffle. Visit the Twilio booth to pick up your prize. If you can't email corey@twilio.com");
             _notificationSid = response.Sid;
 
+            using (var httpClient = new HttpClient())
+            {
+                var data= new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string,string>("winner",msg.From.ToString()),
+                    new KeyValuePair<string,string>("raffleSid", LatestRaffle.Sid),
+                    new KeyValuePair<string, string>("prize", LatestRaffle.Prize.Name)
+                });
+
+                var httpResponse = await httpClient.PostAsync("https://hooks.zapier.com/hooks/catch/3191324/o3o1bt1/", data);
+                httpResponse.EnsureSuccessStatusCode();
+            }
+
             return _notificationSid;
         }
 
@@ -153,29 +172,6 @@ namespace shared.Services
         {
             _logger.LogInformation("Selecting a Raffle Prize");
             var prize = await _prizeService.SelectPrize();
-            /*
-            string response = String.Empty;
-            using (var httpClient = new HttpClient())
-            {
-                response = await httpClient.GetStringAsync("https://black-bombay-6404.twil.io/assets/prizes.json");
-            }
-
-            if (String.IsNullOrEmpty(response))
-            {
-                return null;
-            }
-
-            var json = JObject.Parse(response);
-            var prizeList = json["Raffle"].Children()
-                .Select(token =>
-                    new RafflePrize
-                    {
-                        Name = token["Prize"]["Name"].ToString(),
-                        Quantity = int.Parse(token["Prize"]["Quantity"].ToString()),
-                        ImageUrl = token["Prize"]["ImageUrl"].ToString()
-                    })
-                .Where(prize => prize.Quantity > 0).ToList();
-            var selected = new Random().Next(prizeList.Count);*/
             _logger.LogInformation("Selected a Raffle prize");
             return prize;
         }
