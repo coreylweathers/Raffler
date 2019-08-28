@@ -60,6 +60,7 @@ namespace shared.Services
         public async Task UpdateRepository(int index, RafflePrize data)
         {
             var response = await SyncListItemResource.UpdateAsync(
+                data: data,
                 pathServiceSid: _twilioSyncServiceSid,
                 pathListSid: _twilioSyncListSid,
                 pathIndex: index);

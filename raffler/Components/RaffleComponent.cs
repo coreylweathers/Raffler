@@ -17,7 +17,7 @@ namespace raffler.Components
         [Inject] private HubConnectionBuilder HubConnectionBuilder { get; set; }
         [Inject] private IUriHelper UriHelper { get; set; }
 
-        protected readonly string RaffleNumber = "(913) 270-6063";
+        protected readonly string RaffleNumber = "(404) 800-3505";
         protected List<RaffleEntry> EntryList { get; set; }
 
         private bool _isStartButtonEnabled;

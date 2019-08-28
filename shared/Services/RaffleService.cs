@@ -39,6 +39,11 @@ namespace shared.Services
             {
                 LatestRaffle = await _storageUpdater.GetLatestRaffle();
             }
+
+            if (!_prizeService.IsInitialized)
+            {
+                await _prizeService.InitializeService();
+            }
             _logger.LogInformation("Initialized the Raffle Service");
         }
 
@@ -64,7 +69,7 @@ namespace shared.Services
             // Determine if Raffle is in progress
             // If so throw an exception so the raffle is ended
             _logger.LogInformation("Starting a new raffle");
-            if (LatestRaffle.State == RaffleState.Running)
+            if (LatestRaffle != null && LatestRaffle.State == RaffleState.Running)
             {
                 _logger.LogWarning("There is a Raffle in progress. Stop that raffle first");
                 await Task.CompletedTask;
@@ -76,14 +81,14 @@ namespace shared.Services
             {
                 Name = $"Raffle-{DateTime.UtcNow}",
                 State = RaffleState.Running,
-                Entries = LatestRaffle.Entries.Where(entry => !entry.IsWinner).ToList(),
+                Entries = LatestRaffle?.Entries?.Where(x => !x.IsWinner).ToList() ?? new List<RaffleEntry>(),
                 Prize = prize
             };
             var doc = (await _storageUpdater.CreateRaffle(LatestRaffle.Name,
                 LatestRaffle)) as DocumentResource;
 
             LatestRaffle.Sid = doc?.Sid;
-            await NotifyRaffleReEntrants();
+            //await NotifyRaffleReEntrants();
             _notificationSid = string.Empty;
             _logger.LogInformation("Started a new raffle");
         }

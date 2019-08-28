@@ -13,14 +13,13 @@ namespace shared.Services
         private IDictionary<int, RafflePrize> _prizes;
         private readonly ILogger _logger;
 
-        public PrizeService(ILogger<PrizeService> logger)
+        public PrizeService(IPrizeStorageService storageUpdater, ILogger<PrizeService> logger)
         {
+            _storageUpdater = storageUpdater;
             _logger = logger;
         }
 
         public bool IsInitialized { get; set; }
-
-        public PrizeService(IPrizeStorageService storageUpdater) => _storageUpdater = storageUpdater;
 
         public async Task InitializeService()
         {
@@ -61,6 +60,11 @@ namespace shared.Services
         public async Task<RafflePrize> SelectPrize()
         {
             _logger.LogInformation("Selecting a prize from the list of eligible prizes");
+            if (_prizes.Any(prize => prize.Value.IsSelectedPrize))
+            {
+                return await Task.FromResult(_prizes.FirstOrDefault(prize => prize.Value.IsSelectedPrize).Value);
+            }
+
             var eligiblePrizes = _prizes.Where(entry => !entry.Value.IsSelectedPrize && entry.Value.Quantity > 0).ToList();
 
             var index = new Random().Next(0, eligiblePrizes.Count);
