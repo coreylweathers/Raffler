@@ -1,19 +1,37 @@
 ﻿@inherits raffler.Components.PrizeComponent
 
-<EditForm Model="@Prize" OnValidSubmit="@AddNewPrize">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <p>
-        <label for="name">Prize Name: </label>
-        <InputText id="name" @bind-Value="@Prize.Name" />
-    </p>
-    <p>
-        <label for="imageUrl">Image Url: </label>
-        <InputText id="imageUrl" @bind-Value="@Prize.ImageUrl" />
-    </p>
-    <p>
-        <label for="quantity">Number of Prizes: </label>
-        <InputNumber id="quantity" @bind-Value="@Prize.Quantity" />
-    </p>
-    <button type="submit">Save</button>
-</EditForm>
+<form>
+    <EditForm Model="@Prize" OnValidSubmit="@AddNewPrize">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="row">
+            <div class="col-3">
+                <label for="name" class="col-form-label">Prize Name: </label>
+            </div>
+            <div class="col">
+                <InputText id="name" @bind-Value="@Prize.Name" class="form-control" placeholder="Prize Name" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <label for="imageUrl" class="col-form-label">Image Url: </label>
+            </div>
+            <div class="col">
+                <InputText id="imageUrl" @bind-Value="@Prize.ImageUrl" class="form-control" placeholder="Image URL" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <label for="quantity" class="col-form-label">Number of Prizes: </label>
+            </div>
+            <div class="col">
+                <InputNumber id="quantity" @bind-Value="@Prize.Quantity" class="form-control" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </EditForm>
+</form>
