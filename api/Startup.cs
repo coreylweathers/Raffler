@@ -19,6 +19,7 @@ namespace api
             services.AddSingleton<IRaffleService, RaffleService>();
             services.AddSingleton<IRaffleStorageService, TwilioRaffleStorageService>();
             services.AddSingleton<IPrizeService, PrizeService>();
+            services.AddSingleton<IPrizeStorageService, TwilioPrizeStorageService>();
 
             services.AddHttpClient();
 
