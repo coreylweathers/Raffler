@@ -35,27 +35,39 @@ namespace shared.Services
             IsInitialized = true;
         }
 
-        public async Task AddRafflePrize(RafflePrize prize)
+        public async Task<RafflePrizeStatus> AddRafflePrize(RafflePrize prize)
         {
-
-            if (_prizes.Values.Any(result => string.Equals(prize.Name, result.Name, StringComparison.CurrentCultureIgnoreCase)))
+            if (!IsValidRafflePrize(prize))
             {
-                var index = _prizes.First(result => string.Equals(result.Value.Name, prize.Name, StringComparison.CurrentCultureIgnoreCase)).Key;
+                throw new ArgumentException("Raffle Prize is not a valid prize");
+            }
 
-                _prizes[index].Quantity += prize.Quantity;
-                await _storageUpdater.UpdateRepository(index, prize);
-            }
-            else
+            RafflePrizeStatus resultStatus;
+            try
             {
-                var index = await _storageUpdater.AddItemToRepository(prize);
-                _prizes.Add(index, prize);
+                if (_prizes.Values.Any(result => string.Equals(prize.Name, result.Name, StringComparison.CurrentCultureIgnoreCase)))
+                {
+                    var index = _prizes.First(result => string.Equals(result.Value.Name, prize.Name, StringComparison.CurrentCultureIgnoreCase)).Key;
+
+                    _prizes[index].Quantity += prize.Quantity;
+                    await _storageUpdater.UpdateRepository(index, prize);
+                }
+                else
+                {
+                    var index = await _storageUpdater.AddItemToRepository(prize);
+                    _prizes.Add(index, prize);
+                }
+                resultStatus = RafflePrizeStatus.Successful;
             }
+            catch
+            {
+                resultStatus = RafflePrizeStatus.Unsuccessful;
+            }
+
+            return resultStatus;
         }
 
-        public Task<RafflePrize> GetCurrentPrize()
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<RafflePrize> GetCurrentPrize() => await Task.FromResult(_prizes.FirstOrDefault(entry => entry.Value.IsSelectedPrize).Value);
 
         public async Task<RafflePrize> SelectPrize()
         {
@@ -86,6 +98,21 @@ namespace shared.Services
                 _prizes = await _storageUpdater.GetItems();
             }
             return _prizes.Values.ToList();
+        }
+
+        private bool IsValidRafflePrize(RafflePrize prize)
+        {
+            bool flag = true;
+            if (string.IsNullOrEmpty(prize.Name))
+            {
+                flag = false;
+            }
+            else if (prize.Quantity < Constants.QUANTITY_MINIMUM || prize.Quantity >= Constants.QUANTITY_MAXIMUM)
+            {
+                flag = false;
+            }
+
+             return flag;
         }
     }
 }

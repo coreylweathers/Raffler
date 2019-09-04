@@ -8,7 +8,7 @@ namespace shared.Services
     {
         bool IsInitialized { get; set; }
         Task InitializeService();
-        Task AddRafflePrize(RafflePrize prize);
+        Task<RafflePrizeStatus> AddRafflePrize(RafflePrize prize);
         Task<RafflePrize> GetCurrentPrize();
         Task<RafflePrize> SelectPrize();
         Task<IList<RafflePrize>> GetRafflePrizes();

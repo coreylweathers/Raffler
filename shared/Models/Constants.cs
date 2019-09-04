@@ -8,5 +8,7 @@
         public const string AUTH_TOKEN_PATH = "TwilioAuthToken";
         public const string SIGNAL_R_DOMAIN = "Values:Domain:Signalr";
         public const string SYNC_SERVICE_LIST_SID_PATH = "Values:Twilio:SyncServiceListSid";
+        public const int QUANTITY_MINIMUM = 1;
+        public const int QUANTITY_MAXIMUM = 10;
     }
 }

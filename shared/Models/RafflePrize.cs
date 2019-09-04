@@ -13,7 +13,7 @@ namespace shared.Models
         public string ImageUrl { get; set; }
 
         [Editable(false)]
-        [Range(1,10, ErrorMessage ="You would need to specify a number between 1 and 10")]
+        [Range(Constants.QUANTITY_MINIMUM, Constants.QUANTITY_MAXIMUM, ErrorMessage ="You would need to specify a number between 1 and 10")]
         public int Quantity { get; set; }
         
         [Editable(false)]

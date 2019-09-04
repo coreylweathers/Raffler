@@ -28,7 +28,7 @@ namespace tests.services
             _prizeServiceMock = new Mock<IPrizeService>();
             _loggerMock = new Mock<ILogger<RaffleService>>();
 
-            _currentRaffleEntry = new RaffleEntry();
+            _currentRaffleEntry = new  RaffleEntry();
             _currentRaffle = new Raffle();
         }
 
@@ -80,8 +80,7 @@ namespace tests.services
                 .Returns(async () => await Task.CompletedTask);
             var svc = new RaffleService(_updaterMock.Object, _prizeServiceMock.Object, _configMock.Object, _loggerMock.Object)
             {
-                LatestRaffle =
-            _currentRaffle
+                LatestRaffle = _currentRaffle
             };
 
             // act
