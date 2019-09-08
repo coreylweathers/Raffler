@@ -19,6 +19,7 @@ namespace shared.Services
         private readonly IRaffleStorageService _storageUpdater;
         private readonly IPrizeService _prizeService;
         private readonly ILogger _logger;
+        private List<RaffleWinner> RaffleWinners {  get; set; }
         public bool IsInitialized { get; set; }
 
         public Raffle LatestRaffle { get; set; }
@@ -142,9 +143,14 @@ namespace shared.Services
 
         public async Task<IEnumerable<RaffleWinner>> GetPreviousRaffleWinners()
         {
+            if (RaffleWinners != null)
+            {
+                return RaffleWinners;
+            }
+
             var raffles = (await _storageUpdater.GetRaffles()).ToList();
 
-            var result =
+            RaffleWinners =
                 (from raffle in raffles
                  from entry in raffle.Entries
                  where entry.IsWinner
@@ -155,7 +161,7 @@ namespace shared.Services
                      PrizeName = raffle.Prize.Name
                  }).ToList();
 
-            return result;
+            return RaffleWinners;
         }
 
         private async Task<string> NotifyRaffleWinner(RaffleEntry entry)
