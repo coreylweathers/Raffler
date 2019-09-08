@@ -13,9 +13,17 @@ namespace raffler.Components
         [Inject] private IRaffleService RaffleService { get; set; }
         protected IList<RaffleEntry> RaffleEntries { get; set; }
 
+        protected RafflePrize RafflePrize { get; set; }
+
         protected override async Task OnInitializedAsync()
-        {
-            await Task.CompletedTask;
+        {         
+            if (!RaffleService.IsInitialized)
+            {
+                await RaffleService.InitializeService();
+            }
+
+            RaffleEntries = RaffleService.LatestRaffle.Entries;
+            RafflePrize = RaffleService.LatestRaffle.Prize;
         }
     }
 }

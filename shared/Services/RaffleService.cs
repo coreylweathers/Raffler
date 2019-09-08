@@ -21,6 +21,7 @@ namespace shared.Services
         private readonly IRaffleStorageService _storageUpdater;
         private readonly IPrizeService _prizeService;
         private readonly ILogger _logger;
+        public bool IsInitialized { get; set; }
 
         public Raffle LatestRaffle { get; set; }
 
@@ -44,6 +45,7 @@ namespace shared.Services
             {
                 await _prizeService.InitializeService();
             }
+            IsInitialized = true;
             _logger.LogInformation("Initialized the Raffle Service");
         }
 

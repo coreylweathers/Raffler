@@ -1,7 +1,44 @@
 ﻿@page "/entries"
+@inherits raffler.Components.RaffleEntriesComponent
 
-<h3>Entries</h3>
+<div class="container pl-0">
+    <div class="row">
+        <div class="col-5">
+            <h3>Entries</h3>
+            @if (RaffleEntries == null)
+            {
+                <p>Entries are still loading...</p>
+            }
+            else
+            {
+                <ul class="list-group">
+                    @foreach (var entry in RaffleEntries.TakeLast(5))
+                    {
+                        <li class="list-group-item mb-1">
+                            <p class="h4">Entry @entry.MessageSid.Substring(0, 5)</p>
+                            <p><em>Entry Received at @entry.TimeStamp.ToLocalTime()</em></p>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+        <div class="col">
+            <h3>Stats</h3>
+            @if (RaffleEntries == null)
+            {
+                <p class="h4">Loading stats...</p>
+            }
+            else
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <p class="h4">Time Since Last Entry: </p>
+                        <p class="h5">Total Number of Entries: @RaffleEntries.Count</p>
+                        <p>Prize Info: @RafflePrize.Name</p>
+                    </div>
+                </div>
+            }
 
-@code {
-
-}
+        </div>
+    </div>
+</div>

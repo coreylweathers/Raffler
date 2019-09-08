@@ -6,6 +6,7 @@ namespace shared.Services
 {
     public interface IRaffleService 
     {
+        bool IsInitialized { get; set; }
         Raffle LatestRaffle { get; set; }
         Task InitializeService();
         Task StopRaffle();
