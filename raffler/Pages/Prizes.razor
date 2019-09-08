@@ -1,7 +1,42 @@
 ﻿@page "/prizes"
+@inherits raffler.Components.RafflePrizesComponent
 
-<h3>Prizes</h3>
-
-@code {
-
+<div class="prize-top-row mb-2">
+    <h3>Prizes</h3>
+    <div>
+        <button type="button" class="btn">Add Prize</button>
+        <button type="button" class="btn">Clear Prizes</button>
+    </div>
+</div>
+@if (Prizes == null)
+{
+    <p>Getting Prizes List...</p>
+}
+else if (Prizes.Count == 0)
+{
+    <p>No prizes available...</p>
+}
+else
+{
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Image URL</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for(var i = 0; i < Prizes.Count; i++)
+            {
+                <tr>
+                    <th scope="row">@(i+1)</th>
+                    <td>@Prizes[i].Name</td>
+                    <td>@Prizes[i].Quantity</td>
+                    <td><a href="@Prizes[i].ImageUrl">Link</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }

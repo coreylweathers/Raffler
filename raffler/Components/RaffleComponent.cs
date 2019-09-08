@@ -72,7 +72,7 @@ namespace raffler.Components
 
         protected Task ShowAddPrizeModal()
         {
-            Modal.Show("Add a New Prize", typeof(raffler.Pages.Prize));
+            Modal.Show("Add a New Prize", typeof(raffler.Pages.AddPrize));
             return Task.CompletedTask;
         }
 

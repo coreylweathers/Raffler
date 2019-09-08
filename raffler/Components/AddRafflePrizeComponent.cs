@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace raffler.Components
 {
-    public class PrizeComponent : ComponentBase
+    public class AddRafflePrizeComponent  : ComponentBase
     {
         [Inject]
         private IPrizeService PrizeService { get; set; }

@@ -47,6 +47,22 @@ app {
     .main .content .container-fluid .row .col-10 > .jumbtron {
         background-color: grey;
     }
+
+    .main .prize-top-row {
+        display:inline-flex;
+        justify-content: space-between;
+        width:100%
+    }
+
+    .main .btn {
+        color: whitesmoke;
+        outline-color: grey;
+        background-color: grey;
+    }
+
+    .main .footer {
+        align-self:center flex-end;
+    }
 .sidebar {
     background-image: linear-gradient(180deg, rgba(242,47,70,1) 0%, rgba(255,255,255,1) 85%);
     flex-direction: column;

@@ -13,12 +13,14 @@ namespace shared.Services
         private IDictionary<int, RafflePrize> _prizes;
         private readonly ILogger _logger;
 
+
         public PrizeService(IPrizeStorageService storageUpdater, ILogger<PrizeService> logger)
         {
             _storageUpdater = storageUpdater;
             _logger = logger;
         }
 
+        public List<RafflePrize> Prizes { get { return _prizes.Values.ToList(); } }
         public bool IsInitialized { get; set; }
 
         public async Task InitializeService()
@@ -94,7 +96,7 @@ namespace shared.Services
             return selected.Value;
         }
 
-        public async Task<IList<RafflePrize>> GetRafflePrizes()
+        public async Task<List<RafflePrize>> GetRafflePrizes()
         {
             if (_prizes == null)
             {

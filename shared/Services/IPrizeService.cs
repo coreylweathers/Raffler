@@ -6,11 +6,12 @@ namespace shared.Services
 {
     public interface IPrizeService
     {
+        List<RafflePrize> Prizes { get; }
         bool IsInitialized { get; set; }
         Task InitializeService();
         Task<RafflePrizeStatus> AddRafflePrize(RafflePrize prize);
         Task<RafflePrize> GetCurrentPrize();
         Task<RafflePrize> SelectPrize();
-        Task<IList<RafflePrize>> GetRafflePrizes();
+        Task<List<RafflePrize>> GetRafflePrizes();
     }
 }
