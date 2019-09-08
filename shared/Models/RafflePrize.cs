@@ -14,7 +14,7 @@ namespace shared.Models
 
         [Editable(false)]
         [Range(Constants.QUANTITY_MINIMUM, Constants.QUANTITY_MAXIMUM, ErrorMessage = "You would need to specify a number between 1 and 10")]
-        public int Quantity { get; set; }
+        public int Quantity { get; set; } = 1;
 
         [Editable(false)]
         [Display(Name = "Selected Prize")]

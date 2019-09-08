@@ -10,6 +10,7 @@ namespace raffler.Components
     public class RafflePrizesComponent : ComponentBase
     {
         [Inject] private IPrizeService PrizeService { get; set; }
+        [Inject] private IModalService Modal { get; set; }
         protected List<RafflePrize> Prizes { get; set; }
 
         protected override async Task OnInitializedAsync()
@@ -20,6 +21,12 @@ namespace raffler.Components
             }
 
             Prizes = await PrizeService.GetRafflePrizes();
+        }
+
+        protected async Task ShowAddPrizeModal()
+        {
+            Modal.Show("Add a New Prize", typeof(raffler.Pages.AddPrize));
+            await Task.CompletedTask;
         }
     }
 }

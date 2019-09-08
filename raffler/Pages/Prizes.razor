@@ -4,8 +4,8 @@
 <div class="prize-top-row mb-2">
     <h3>Prizes</h3>
     <div>
-        <button type="button" class="btn">Add Prize</button>
-        <button type="button" class="btn">Clear Prizes</button>
+        <button type="button" class="btn" @onclick="ShowAddPrizeModal">Add Prize</button>
+        <button type="button" class="btn" disabled>Clear Prizes</button>
     </div>
 </div>
 @if (Prizes == null)

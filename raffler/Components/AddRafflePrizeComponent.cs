@@ -14,7 +14,7 @@ namespace raffler.Components
         [Inject]
         private IModalService ModalService { get; set; }
 
-        public RafflePrize Prize { get; set; }
+        protected RafflePrize Prize { get; set; }
 
         protected override async Task OnInitializedAsync()
         {

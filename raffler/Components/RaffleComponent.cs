@@ -68,16 +68,6 @@ namespace raffler.Components
             await RaffleService.ClearRaffles();
         }
 
-
-
-        protected Task ShowAddPrizeModal()
-        {
-            Modal.Show("Add a New Prize", typeof(raffler.Pages.AddPrize));
-            return Task.CompletedTask;
-        }
-
-
-
         private async Task InitalizeSignalRAsync()
         {
             // in Component Initialization code
