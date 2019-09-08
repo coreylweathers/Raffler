@@ -1,95 +1,30 @@
 ﻿@page "/"
-@inherits raffler.Components.RaffleComponent
 
-
-<div class="background-photo">
-    <nav class="navbar sticky-top navbar-expand-sm navbar-dark bg-dark">
-        <ul class="nav nav-center">
-            <li class="nav-item px-3">
-                <button type="button" class="btn btn-primary" @onclick="@StartRaffle">Start Raffle</button>
-            </li>
-            <li class="nav-item px-3">
-                <button type="button" class="btn btn-primary" @onclick="@StopRaffle">Stop Raffle</button>
-            </li>
-            <li class="nav-item px-3">
-                <button type="button" class="btn btn-primary" @onclick="@SelectRaffleWinner">Select Winner</button>
-            </li>
-            <li class="nav-item px-3">
-                <button type="button" class="btn btn-primary" @onclick="@ShowAddPrizeModal">Add Prize</button>
-            </li>
-        </ul>
-        <img src="images/twilio-badge-white.png" class="rounded float-right" alt="Powered by Twilio">
-    </nav>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col"></div>
-            <div class="col-10">
-                <div class="jumbotron">
-                    <div class="row">
-                        <div class="col welcome-text">
-                            <h1 class="display-4">Welcome to the HBCU 20x20 Tour Stop at AUC</h1>
-                            <h3 class="lead">Text @RaffleNumber to enter our raffle or scan the QR code here</h3>
-                        </div>
-                        <div class="col-3">
-                            <img class="qr-code rounded float-right"
-                                 src="images/images.png" />
-                        </div>
-                    </div>
-                </div>
-                <hr class="divider" />
-                <div class="jumbotron">
-                    <div class="row justify-content-around">
-                        <div class="col-5">
-                            @{
-
-                                if (EntryList == null || EntryList.Count == 0)
-                                {
-                                    <p><em>No Entries Found Yet...</em></p>
-                                }
-                                else
-                                {
-                                    <h2>Total Entries: @EntryList.Count</h2>
-
-
-                                    <h2>Last 3 Entries</h2>
-                                    <ul class="list-group">
-                                        @foreach (var entry in EntryList.OrderByDescending(entry => entry.TimeStamp).Take(3))
-                                        {
-                                            <li class="list-group-item active">
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <h5 class="card-title">New Entry: @entry.MessageSid.Substring(0, 5)</h5>
-                                                        <small>Entered at @entry.TimeStamp.ToLocalTime()</small>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        }
-                                    </ul>
-                                }
-                            }
-                        </div>
-                        <div class="col-5">
-                            @{
-                                <h2>Current Raffle Prize</h2>
-                                if (!string.IsNullOrEmpty(PrizeName) && !string.IsNullOrEmpty(PrizeUrl))
-                                {
-                                    <p>@PrizeName</p>
-                                    <hr style="color:white;" />
-                                    <img class="prize-img rounded float-left" src="@(PrizeUrl)" />
-                                }
-                                else
-                                {
-                                    <p>Prize hasn't been selected yet. Stay tuned...</p>
-                                }
-                            }
-                        </div>
-                    </div>
+<div class="container-fluid">
+    <div class="row mb-2">
+        <div class="col">
+            <div class="jumbotron">
+                <div class="welcome-text">
+                    <h1 class="display-4">Welcome to the HBCU 20x20 Tour Stop at Morgan State</h1>
                 </div>
             </div>
-            <div class="col"></div>
         </div>
     </div>
-    <footer class="align-text-bottom justify-content-center">
-        <p>All Rights Reserved.</p>
-    </footer>
+    <hr class="divider" />
+    <div class="row">
+        <div class="col">
+            <div class="jumbotron">
+                <p>Here's How This Works</p>
+                <ol>
+                    <li class="mb-2">Scan the QR Code or Text "Hi" to (410) 469-1475</li>
+                    <li class="mb-2">Answer the question to Enter the raffle</li>
+                    <li class="mb-2">Check Your Phone to See if You've Won</li>
+                </ol>
+            </div>
+        </div>
+        <div class="col">
+            <img class="qr-code rounded float-right"
+                 src="images/qrcode.png" />
+        </div>
+    </div>
 </div>

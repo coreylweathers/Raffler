@@ -1,6 +1,21 @@
 ﻿@inherits LayoutComponentBase
 
 <Blazored.Modal.BlazoredModal />
+<div class="sidebar">
+    <NavMenu />
+    <img class="cobrand-img align-baseline mx-3" src="/images/twilio-badge-red.png" alt="Powered by Twilio" />
+
+</div>
+
 <div class="main">
-    @Body
+    <div class="top-row">
+        <MasterControls />
+    </div>
+
+    <div class="content px-4">
+        @Body
+    </div>
+    <footer class="align-text-bottom justify-content-center">
+        <p>All Rights Reserved.</p>
+    </footer>
 </div>

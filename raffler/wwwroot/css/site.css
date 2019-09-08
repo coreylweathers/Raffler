@@ -1,7 +1,12 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@font-face {
+    font-family: Whitney;
+    src: local('Whitney-Book.otf');
+}
+
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: Whitney,'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 a {
@@ -19,6 +24,12 @@ app {
     display: flex;
     align-items: center;
 }
+    
+    .top-row .controls .btn {
+        color: whitesmoke;
+        outline-color:grey;
+        background-color:grey;
+    }
 
 .main {
     flex: 1;
@@ -27,15 +38,17 @@ app {
     .main .top-row {
         background-color: #e6e6e6;
         border-bottom: 1px solid #d6d5d5;
-        justify-content: flex-end;
     }
 
         .main .top-row > a {
             margin-left: 1.5rem;
         }
-
+    .main .content .container-fluid .row .col-10 > .jumbtron {
+        background-color: grey;
+    }
 .sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+    background-image: linear-gradient(180deg, rgba(242,47,70,1) 0%, rgba(255,255,255,1) 85%);
+    flex-direction: column;
 }
 
     .sidebar .top-row {
@@ -51,6 +64,12 @@ app {
         font-size: 1.1rem;
         vertical-align: text-top;
         top: -2px;
+    }
+
+    .sidebar .cobrand-img {
+        height: 3em;
+        position: fixed;
+        bottom: 50px;
     }
 
 .nav-item {
