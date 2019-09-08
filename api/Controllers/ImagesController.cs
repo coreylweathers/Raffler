@@ -24,7 +24,7 @@ namespace api.Controllers
             _qrCode = new PngByteQRCode(qrCodeData);
 
             return File(_qrCode.GetGraphic(10), "image/png");
-           
+
         }
     }
 }

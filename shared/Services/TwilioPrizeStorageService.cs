@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using shared.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Twilio;
 using Twilio.Rest.Sync.V1.Service;
 using Twilio.Rest.Sync.V1.Service.SyncList;
-using System.Linq;
-using Newtonsoft.Json;
 
 namespace shared.Services
 {
@@ -74,10 +74,12 @@ namespace shared.Services
             return results.ToDictionary(entry => entry.Index.Value, entry => JsonConvert.DeserializeObject<RafflePrize>(JsonConvert.SerializeObject(entry.Data)));
         }
 
-        public async Task<int> AddItemToRepository(RafflePrize data) => 
-            (await SyncListItemResource.CreateAsync(
-                pathServiceSid: _twilioSyncServiceSid,
-                pathListSid: _twilioSyncListSid,
-                data: data)).Index.Value;
+        public async Task<int> AddItemToRepository(RafflePrize data)
+        {
+            return (await SyncListItemResource.CreateAsync(
+pathServiceSid: _twilioSyncServiceSid,
+pathListSid: _twilioSyncListSid,
+data: data)).Index.Value;
+        }
     }
 }

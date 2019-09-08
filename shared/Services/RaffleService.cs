@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using shared.Models;
 using System;
 using System.Collections.Generic;
@@ -142,6 +140,24 @@ namespace shared.Services
             return await Task.FromResult(LatestRaffle.Entries.Any(entry => string.Equals(entry.PhoneNumber, phoneNumber, StringComparison.CurrentCultureIgnoreCase)));
         }
 
+        public async Task<IEnumerable<RaffleWinner>> GetPreviousRaffleWinners()
+        {
+            var raffles = (await _storageUpdater.GetRaffles()).ToList();
+
+            var result =
+                (from raffle in raffles
+                 from entry in raffle.Entries
+                 where entry.IsWinner
+                 select new RaffleWinner
+                 {
+                     RaffleName = raffle.Name,
+                     MessageSid = entry.MessageSid,
+                     PrizeName = raffle.Prize.Name
+                 }).ToList();
+
+            return result;
+        }
+
         private async Task<string> NotifyRaffleWinner(RaffleEntry entry)
         {
             var msg = await MessageResource.FetchAsync(
@@ -156,7 +172,7 @@ namespace shared.Services
 
             using (var httpClient = new HttpClient())
             {
-                var data= new FormUrlEncodedContent(new[]
+                var data = new FormUrlEncodedContent(new[]
                 {
                     new KeyValuePair<string,string>("winner",msg.From.ToString()),
                     new KeyValuePair<string,string>("raffleSid", LatestRaffle.Sid),

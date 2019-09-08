@@ -1,9 +1,9 @@
+using Microsoft.Extensions.Logging;
+using shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using shared.Models;
 
 namespace shared.Services
 {
@@ -67,7 +67,10 @@ namespace shared.Services
             return resultStatus;
         }
 
-        public async Task<RafflePrize> GetCurrentPrize() => await Task.FromResult(_prizes.FirstOrDefault(entry => entry.Value.IsSelectedPrize).Value);
+        public async Task<RafflePrize> GetCurrentPrize()
+        {
+            return await Task.FromResult(_prizes.FirstOrDefault(entry => entry.Value.IsSelectedPrize).Value);
+        }
 
         public async Task<RafflePrize> SelectPrize()
         {
@@ -112,7 +115,7 @@ namespace shared.Services
                 flag = false;
             }
 
-             return flag;
+            return flag;
         }
     }
 }

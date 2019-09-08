@@ -1,4 +1,5 @@
 ﻿using shared.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace shared.Services
@@ -10,5 +11,6 @@ namespace shared.Services
         Task<object> FindRaffleItemByName(string itemName);
         Task ClearStorage();
         Task<Raffle> GetLatestRaffle();
+        Task<IEnumerable<Raffle>> GetRaffles();
     }
 }

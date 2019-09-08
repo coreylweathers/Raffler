@@ -6,9 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using raffler.Hubs;
-using shared.Models;
 using shared.Services;
-using System;
 
 namespace raffler
 {
@@ -26,7 +24,7 @@ namespace raffler
 
             services.AddSingleton<IRaffleService, RaffleService>();
             services.AddSingleton<IPrizeService, PrizeService>();
-            services.AddSingleton<IRaffleStorageService,TwilioRaffleStorageService>();
+            services.AddSingleton<IRaffleStorageService, TwilioRaffleStorageService>();
             services.AddSingleton<IPrizeStorageService, TwilioPrizeStorageService>();
 
             services.AddHttpClient();
@@ -35,7 +33,7 @@ namespace raffler
 
             services.AddCors(action =>
             {
-                action.AddDefaultPolicy(policy => 
+                action.AddDefaultPolicy(policy =>
                 {
                     // TODO: Refine CORS method to restrict origin to list in appsettings
                     policy.AllowAnyOrigin();

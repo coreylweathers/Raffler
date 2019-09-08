@@ -9,7 +9,7 @@ namespace shared.Models
         public string PhoneNumber { get; set; }
         public string MessageSid { get; set; }
         public DateTime TimeStamp { get; } = DateTime.UtcNow;
-        [JsonProperty(Required= Required.Default)]
+        [JsonProperty(Required = Required.Default)]
         public bool IsWinner { get; set; } = false;
     }
 }

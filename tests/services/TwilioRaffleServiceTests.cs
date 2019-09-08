@@ -28,7 +28,7 @@ namespace tests.services
             _prizeServiceMock = new Mock<IPrizeService>();
             _loggerMock = new Mock<ILogger<RaffleService>>();
 
-            _currentRaffleEntry = new  RaffleEntry();
+            _currentRaffleEntry = new RaffleEntry();
             _currentRaffle = new Raffle();
         }
 

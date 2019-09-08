@@ -95,7 +95,7 @@ namespace api.Controllers
                 return await Task.FromResult(new JsonResult(JObject.Parse(response)));
             }
 
-            if (await IsProblemEntry(userIdentifier,channel))
+            if (await IsProblemEntry(userIdentifier, channel))
             {
                 return await Task.FromResult(new JsonResult(JObject.Parse(TempJsonString)));
             }
@@ -107,9 +107,9 @@ namespace api.Controllers
         [HttpPost("inprogress")]
         public async Task<IActionResult> ConfirmRaffleState()
         {
-            
+
             var redirectUri = (_raffleService.LatestRaffle.State == RaffleState.Running) ? "task://confirm_unique_entry" : "task://say_raffle_notstarted";
-            
+
             var response = @"{""actions"": [{""redirect"":""" + redirectUri + @"""}]}";
             var result = JObject.Parse(response);
 

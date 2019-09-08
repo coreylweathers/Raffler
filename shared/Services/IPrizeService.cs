@@ -1,6 +1,6 @@
+using shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using shared.Models;
 
 namespace shared.Services
 {

@@ -1,15 +1,15 @@
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
+using shared.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Twilio.Rest.Sync.V1.Service;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Twilio;
-using Microsoft.Extensions.Configuration;
-using shared.Models;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
-using Twilio.Clients;
+using Twilio.Rest.Sync.V1.Service;
 
 namespace shared.Services
 {
@@ -95,7 +95,21 @@ namespace shared.Services
 
             var raffleData = JObject.Parse(JsonConvert.SerializeObject(latestDocument.Data));
 
-            var latestRaffle = new Raffle
+            return ConvertDocToRaffle(latestDocument, raffleData);
+        }
+
+        public async Task<IEnumerable<Raffle>> GetRaffles()
+        {
+            var documents = (await DocumentResource.ReadAsync(
+                pathServiceSid: _serviceSid)).ToList();
+            return (from doc in documents
+                    let json = JObject.Parse(JsonConvert.SerializeObject(doc.Data))
+                    select ConvertDocToRaffle(doc, json)).ToList();
+        }
+
+        private Raffle ConvertDocToRaffle(DocumentResource latestDocument, JObject raffleData)
+        {
+            return new Raffle
             {
                 Name = latestDocument.UniqueName,
                 Sid = latestDocument.Sid,
@@ -111,7 +125,8 @@ namespace shared.Services
                 },
                 Current = bool.Parse(raffleData["current"].ToString())
             };
-            return latestRaffle;
         }
+
+
     }
 }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace shared.Services
 {
-    public interface IRaffleService 
+    public interface IRaffleService
     {
         bool IsInitialized { get; set; }
         Raffle LatestRaffle { get; set; }
@@ -15,5 +15,6 @@ namespace shared.Services
         Task<string> SelectRaffleWinner();
         Task ClearRaffles();
         Task<bool> ContainsPhoneNumber(string phoneNumber);
+        Task<IEnumerable<RaffleWinner>> GetPreviousRaffleWinners();
     }
 }

@@ -1,20 +1,19 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Blazored.Modal.Services;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
 using shared.Models;
 using shared.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
 using System;
-using Microsoft.AspNetCore.SignalR.Client;
-using Blazored.Modal.Services;
-using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace raffler.Components
 {
     public class RaffleComponent : ComponentBase
     {
         [Inject] private IRaffleService RaffleService { get; set; }
-        [Inject] private IModalService Modal {get;set;} 
+        [Inject] private IModalService Modal { get; set; }
         [Inject] private HubConnectionBuilder HubConnectionBuilder { get; set; }
         [Inject] private NavigationManager NavigationManager { get; set; }
 
@@ -62,14 +61,14 @@ namespace raffler.Components
             StateHasChanged();
         }
 
-        
+
 
         protected async Task ClearRaffles()
         {
             await RaffleService.ClearRaffles();
         }
 
-        
+
 
         protected Task ShowAddPrizeModal()
         {
@@ -77,10 +76,10 @@ namespace raffler.Components
             return Task.CompletedTask;
         }
 
-        
+
 
         private async Task InitalizeSignalRAsync()
-        {          
+        {
             // in Component Initialization code
             var connection = HubConnectionBuilder // the injected one from above.
                     .WithUrl($"{NavigationManager.BaseUri}rafflehub") // The hub URL. If the Hub is hosted on the server where the blazor is hosted, you can just use the relative path.

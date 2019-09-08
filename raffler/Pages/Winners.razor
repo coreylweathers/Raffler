@@ -1,6 +1,34 @@
 ﻿@page "/winners"
-<h3>Winners</h3>
+@inherits raffler.Components.RaffleWinnersComponent
 
-@code {
-
-}
+<div class="ml-1">
+    <h3>Winners</h3>
+    @if (!RaffleService.IsInitialized)
+    {
+        <p class="h4"><em>Loading Winners Table...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Raffle Name</th>
+                    <th scope="col">Entry SID</th>
+                    <th scope="col">Prize Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < RaffleWinners.Count(); i++)
+                {
+                    <tr>
+                        <th scope="row">@i+1</th>
+                        <td>@RaffleWinners[i].RaffleName</td>
+                        <td>@RaffleWinners[i].MessageSid</td>
+                        <td>@RaffleWinners[i].PrizeName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

@@ -2,16 +2,15 @@
 using shared.Models;
 using shared.Services;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace raffler.Components
 {
-    public class RaffleEntriesComponent : ComponentBase
+    public class RaffleWinnersComponent : ComponentBase
     {
-        [Inject] private IRaffleService RaffleService { get; set; }
-        protected IList<RaffleEntry> RaffleEntries { get; set; }
-
-        protected RafflePrize RafflePrize { get; set; }
+        [Inject] protected IRaffleService RaffleService { get; set; }
+        protected List<RaffleWinner> RaffleWinners { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -20,8 +19,8 @@ namespace raffler.Components
                 await RaffleService.InitializeService();
             }
 
-            RaffleEntries = RaffleService.LatestRaffle.Entries;
-            RafflePrize = RaffleService.LatestRaffle.Prize;
+            RaffleWinners = (await RaffleService.GetPreviousRaffleWinners()).ToList();
+
         }
     }
 }

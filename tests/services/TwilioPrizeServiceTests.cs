@@ -5,8 +5,6 @@ using Moq;
 using shared.Models;
 using shared.Services;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace tests.services
@@ -15,9 +13,9 @@ namespace tests.services
     public class TwilioPrizeServiceTests
     {
         private static TestContext _testContext;
-        private Mock<IConfiguration> _configMock;
-        private Mock<ILogger<PrizeService>> _loggerMock;
-        private Mock<IPrizeStorageService> _storageMock;
+        private readonly Mock<IConfiguration> _configMock;
+        private readonly Mock<ILogger<PrizeService>> _loggerMock;
+        private readonly Mock<IPrizeStorageService> _storageMock;
 
         public TwilioPrizeServiceTests()
         {
@@ -80,7 +78,7 @@ namespace tests.services
                .ReturnsAsync(0);
             _storageMock.SetupProperty(x => x.IsInitialized).SetReturnsDefault(true);
 
-            var prize = new RafflePrize { Name="Current Prize", Quantity=1, IsSelectedPrize = true };
+            var prize = new RafflePrize { Name = "Current Prize", Quantity = 1, IsSelectedPrize = true };
             var svc = new PrizeService(_storageMock.Object, _loggerMock.Object);
             await svc.InitializeService();
             var result = await svc.AddRafflePrize(prize);
