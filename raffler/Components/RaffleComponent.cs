@@ -7,6 +7,7 @@ using System.Linq;
 using System;
 using Microsoft.AspNetCore.SignalR.Client;
 using Blazored.Modal.Services;
+using System.Net.Http;
 
 namespace raffler.Components
 {
@@ -15,7 +16,7 @@ namespace raffler.Components
         [Inject] private IRaffleService RaffleService { get; set; }
         [Inject] private IModalService Modal {get;set;} 
         [Inject] private HubConnectionBuilder HubConnectionBuilder { get; set; }
-        [Inject] private IUriHelper UriHelper { get; set; }
+        [Inject] private NavigationManager NavigationManager { get; set; }
 
         protected readonly string RaffleNumber = "(404) 800-3505";
         protected List<RaffleEntry> EntryList { get; set; }
@@ -122,11 +123,10 @@ namespace raffler.Components
         }
 
         private async Task InitalizeSignalRAsync()
-        {
-            var uri = new Uri($"{UriHelper.GetBaseUri()}rafflehub");
+        {          
             // in Component Initialization code
             var connection = HubConnectionBuilder // the injected one from above.
-                    .WithUrl(uri) // The hub URL. If the Hub is hosted on the server where the blazor is hosted, you can just use the relative path.
+                    .WithUrl($"{NavigationManager.BaseUri}rafflehub") // The hub URL. If the Hub is hosted on the server where the blazor is hosted, you can just use the relative path.
                     .Build(); // Build the HubConnection
             connection.On<RaffleEntry>("AddRaffleEntry", UpdateEntryList);
             await connection.StartAsync();

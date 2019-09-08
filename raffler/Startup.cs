@@ -29,6 +29,8 @@ namespace raffler
             services.AddSingleton<IRaffleStorageService,TwilioRaffleStorageService>();
             services.AddSingleton<IPrizeStorageService, TwilioPrizeStorageService>();
 
+            services.AddHttpClient();
+
             services.AddTransient<HubConnectionBuilder>();
 
             services.AddCors(action =>

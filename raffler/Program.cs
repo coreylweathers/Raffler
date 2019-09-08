@@ -15,6 +15,10 @@ namespace raffler
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    if (string.Equals(webBuilder.GetSetting("Environment"), "Development", System.StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        webBuilder.UseSetting(WebHostDefaults.DetailedErrorsKey, "true");
+                    }
                     webBuilder.UseStartup<Startup>();
                 });
     }
