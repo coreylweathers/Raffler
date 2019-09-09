@@ -25,7 +25,11 @@ app {
     align-items: center;
     z-index: 999;
 }
-    
+    .top-row .controls {
+        display:inherit;
+        justify-content: space-evenly;
+        width: 100%
+    }
     .top-row .controls .btn {
         color: whitesmoke;
         outline-color:grey;
